@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "695183399338",
+    "firebase_url": "https://dibujillo.firebaseio.com",
+    "project_id": "dibujillo",
+    "storage_bucket": "dibujillo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695183399338:android:43afe0fafe3456a40833d3",
+        "android_client_info": {
+          "package_name": "com.dibujilloteam.dibujillo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "695183399338-66i59tef7mmadjad1e9cp0iqcufqioq6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaR3zy5uYTDZTWKsZeMQ4ktLGLAIXdCMw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "695183399338-66i59tef7mmadjad1e9cp0iqcufqioq6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "695183399338-i9djb7b9m03notqq3om5v0pcc52e5nl2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dibujilloteam.dibujillo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
