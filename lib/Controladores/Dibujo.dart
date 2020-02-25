@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dibujillo/Modelos/Trazo.dart';
 import 'package:flutter/cupertino.dart';
 
 class Dibujo extends ChangeNotifier {
 
-  List<Offset> points = <Offset>[];
+  List<Trazo> points = <Trazo>[];
 
   double separadores = 1;
 
@@ -16,13 +17,13 @@ class Dibujo extends ChangeNotifier {
       //print("datos ${dibujo.data["points"]}");
       points.clear();
       List a = dibujo.data["points"];
-      List<Offset> aux = List();
+      List<Trazo> aux = List();
       for(var b in a){
         if (b["x"] < 0) {
           aux.add(null);
         }
         else {
-          Offset newOffset = Offset(b["x"], b["y"]);
+          Trazo newOffset = Trazo(Offset(b["x"], b["y"]), Color(int.parse(b["color"])));
           aux.add(newOffset);
         }
       }
