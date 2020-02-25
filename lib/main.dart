@@ -101,10 +101,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 child: Stack(children: [
                   CustomPaint(
-                      painter: new Pantalla(points: dibujo.points),
+                      painter: new Pantalla(points: dibujo.points, refresh: false),
                       size: Size.infinite),
                   CustomPaint( // Esto aun no se por que no va
-                      painter: new Pantalla(points: newPoints),
+                      painter: new Pantalla(points: newPoints, refresh: true),
                       size: Size.infinite),
                 ]),
               ),
@@ -128,8 +128,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class Pantalla extends CustomPainter {
   List<Offset> points;
+  bool refresh;
 
-  Pantalla({this.points});
+  Pantalla({this.points, this.refresh});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -146,5 +147,5 @@ class Pantalla extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(Pantalla oldDelegate) => oldDelegate.points != points;
+  bool shouldRepaint(Pantalla oldDelegate) => refresh || oldDelegate.points != points;
 }
