@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Controladores/Dibujo.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
+import 'package:dibujillo/Vistas/Registrase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:dibujillo/Vistas/InicioSesion.dart';
 
 void main() {
   runApp(
@@ -39,7 +41,11 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      routes: <String, WidgetBuilder>{
+        '/signin': (BuildContext context) => new SigninPage(),
+        '/signup': (BuildContext context) => new SignupPage(),
+      },
+      home: MyHomePage(title: 'Dibujillo Demo Home Page'),
     );
   }
 }
@@ -190,6 +196,24 @@ class _MyHomePageState extends State<MyHomePage> {
                           .updateData({"points": []});
                       Navigator.pop(context, 'Borrar');
                       dibu.separadores = 1;
+                    },
+                  ),
+                  CupertinoActionSheetAction(
+                    child: const Text('IniciarSesion'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SigninPage()),
+                      );
+                    },
+                  ),
+                  CupertinoActionSheetAction(
+                    child: const Text('Registrarse'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignupPage()),
+                      );
                     },
                   ),
                 ],
