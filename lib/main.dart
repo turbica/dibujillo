@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Controladores/Dibujo.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
+import 'package:dibujillo/Vistas/Principal.dart';
 import 'package:dibujillo/Vistas/Registrase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -205,6 +206,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => SigninPage()),
+                      );
+                    },
+                  ),
+                  CupertinoActionSheetAction(
+                    child: const Text('IniciarSesion'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PrincipalPage()),
                       );
                     },
                   ),
