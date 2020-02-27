@@ -66,18 +66,34 @@ class PrincipalPageState extends State<PrincipalPage> {
               ),
             ),
             Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  RaisedButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'JUGAR',
-                      style: TextStyle(fontSize: 20)
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    new RaisedButton(
+                      onPressed: (){},
+                      textColor: Colors.white,
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.green[900],
+                              Colors.green[700],
+                              Colors.green[300]
+                            ],
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(10.0),
+                        child: const Text(
+                          'JUGAR',
+                          style: TextStyle(fontSize: 20)
+                        ),
+                      ),
                     ),
-                  )
-                ],
-              )
+                  ],
+                )
             )
           ],
         ),
