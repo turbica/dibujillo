@@ -33,7 +33,7 @@ class _SignupPageState extends State<SignupPage> {
         print('error $_email');
         AuthResult user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
         Firestore.instance.collection('usuario').add({
-          "verificado" : false,
+          "nickname" : _nickname,
           "email" : _email,
         });
         print('Registrado');

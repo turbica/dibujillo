@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dibujillo/CHATILI/Chat.dart';
 import 'package:dibujillo/Controladores/Dibujo.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
 import 'package:dibujillo/Vistas/Principal.dart';
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
         '/signin': (BuildContext context) => new SigninPage(),
         '/signup': (BuildContext context) => new SignupPage(),
       },
-      home: MyHomePage(title: 'Dibujillo Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
@@ -94,74 +95,83 @@ class _MyHomePageState extends State<MyHomePage> {
     double ancho = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
-        child: Consumer<Dibujo>(
-          builder: (context, dibujo, child) {
-            if (dibujo.points.length > newPoints.length) newPoints.clear();
-            bool soyMasPequeno = ancho < dibujo.anchoLienzo;
-            return Transform.scale(
-              scale: soyMasPequeno ? 1 : ancho / dibujo.anchoLienzo,
-              alignment: Alignment.topLeft,
+        child: Column(
+          //mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Consumer<Dibujo>(
+              builder: (context, dibujo, child) {
+                if (dibujo.points.length > newPoints.length) newPoints.clear();
+                bool soyMasPequeno = ancho < dibujo.anchoLienzo;
+                return Transform.scale(
+                  scale: soyMasPequeno ? 1 : ancho / dibujo.anchoLienzo,
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    width: soyMasPequeno ? ancho : dibujo.anchoLienzo,
+                    height: soyMasPequeno ? ancho : dibujo.anchoLienzo,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black),
+                      shape: BoxShape.rectangle
+                    ),
+                    child: GestureDetector(
+                      onPanUpdate: (DragUpdateDetails details) {
+                        setState(() {
+                          RenderBox renderBox = context.findRenderObject();
+                          Offset _localPosition =
+                              renderBox.globalToLocal(details.globalPosition);
+                          newPoints.add(Trazo(_localPosition, colorTrazo));
+                        });
+                        },
+                      onPanEnd: (DragEndDetails details) {
+                        newPoints.add(null);
+                        List<Map<String, dynamic>> aux = List();
+                        for (Trazo trazo in newPoints) {
+                          if (trazo == null) {
+                            aux.add({
+                              "x": -dibujo.separadores,
+                              "y": -dibujo.separadores,
+                              "color": null
+                            });
+                          } else {
+                            aux.add({
+                              "x": trazo.offset.dx,
+                              "y": trazo.offset.dy,
+                              "color": trazo.color.toString().substring(6, 16)
+                            });
+                          }
+                        }
+                        Firestore.instance
+                            .collection('dibujo')
+                            .document('uno')
+                            .updateData({
+                          "points": FieldValue.arrayUnion(aux),
+                        });
+                        dibujo.updateSeperador();
+                      },
+                      child: Stack(children: [
+                        ClipRect(
+                          child: CustomPaint(
+                              painter:
+                                  new Pantalla(trazos: dibujo.points, refresh: false),
+                              size: Size(ancho, ancho),
+                          ),
+                        ),
+                        ClipRect(
+                          child: CustomPaint(
+                              // Esto aun no se por que no va
+                              painter: new Pantalla(trazos: newPoints, refresh: true),
+                              size: Size(ancho, ancho)),
+                        ),
+                      ]),
+                    ),
+                  ),
+                );
+              },
+            ),
+            Expanded(
               child: Container(
-                width: soyMasPequeno ? ancho : dibujo.anchoLienzo,
-                height: soyMasPequeno ? ancho : dibujo.anchoLienzo,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  shape: BoxShape.rectangle
-                ),
-                child: GestureDetector(
-                  onPanUpdate: (DragUpdateDetails details) {
-                    setState(() {
-                      RenderBox renderBox = context.findRenderObject();
-                      Offset _localPosition =
-                          renderBox.globalToLocal(details.globalPosition);
-                      newPoints.add(Trazo(_localPosition, colorTrazo));
-                    });
-                    },
-                  onPanEnd: (DragEndDetails details) {
-                    newPoints.add(null);
-                    List<Map<String, dynamic>> aux = List();
-                    for (Trazo trazo in newPoints) {
-                      if (trazo == null) {
-                        aux.add({
-                          "x": -dibujo.separadores,
-                          "y": -dibujo.separadores,
-                          "color": null
-                        });
-                      } else {
-                        aux.add({
-                          "x": trazo.offset.dx,
-                          "y": trazo.offset.dy,
-                          "color": trazo.color.toString().substring(6, 16)
-                        });
-                      }
-                    }
-                    Firestore.instance
-                        .collection('dibujo')
-                        .document('uno')
-                        .updateData({
-                      "points": FieldValue.arrayUnion(aux),
-                    });
-                    dibujo.updateSeperador();
-                  },
-                  child: Stack(children: [
-                    ClipRect(
-                      child: CustomPaint(
-                          painter:
-                              new Pantalla(trazos: dibujo.points, refresh: false),
-                          size: Size(ancho, ancho),
-                      ),
-                    ),
-                    ClipRect(
-                      child: CustomPaint(
-                          // Esto aun no se por que no va
-                          painter: new Pantalla(trazos: newPoints, refresh: true),
-                          size: Size(ancho, ancho)),
-                    ),
-                  ]),
-                ),
-              ),
-            );
-          },
+                  child: Chat2()),
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -260,4 +270,111 @@ class Pantalla extends CustomPainter {
   @override
   bool shouldRepaint(Pantalla oldDelegate) =>
       refresh || oldDelegate.trazos != trazos;
+}
+
+class Chat2 extends StatefulWidget {
+  @override
+  State createState() => new ChatWindow2();
+}
+
+class ChatWindow2 extends State<Chat2> with TickerProviderStateMixin {
+  final List<Msg> _messages = <Msg>[];
+  final TextEditingController _textController = new TextEditingController();
+  bool _isWriting = false;
+
+  @override
+  Widget build(BuildContext ctx) {
+    return new Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+        new Flexible(
+          flex: 1,
+            child: new ListView.builder(
+              itemBuilder: (_, int index) => _messages[index],
+              itemCount: _messages.length,
+              reverse: true,
+              padding: new EdgeInsets.all(6.0),
+            )),
+        new Divider(height: 1.0),
+        new Container(
+          child: _buildComposer(),
+          decoration: new BoxDecoration(color: Theme.of(ctx).cardColor),
+        ),
+      ]
+    );
+  }
+
+
+  Widget _buildComposer() {
+    return new IconTheme(
+      data: new IconThemeData(color: Theme.of(context).accentColor),
+      child: new Container(
+          margin: const EdgeInsets.symmetric(horizontal: 9.0),
+          child: new Row(
+            children: <Widget>[
+              new Flexible(
+                child: new TextField(
+                  controller: _textController,
+                  onChanged: (String txt) {
+                    setState(() {
+                      _isWriting = txt.length > 0;
+                    });
+                  },
+                  onSubmitted: _submitMsg,
+                  decoration:
+                  new InputDecoration.collapsed(hintText: "Enter some text to send a message"),
+                ),
+              ),
+              new Container(
+                  margin: new EdgeInsets.symmetric(horizontal: 3.0),
+                  child: Theme.of(context).platform == TargetPlatform.iOS
+                      ? new CupertinoButton(
+                      child: new Text("Submit"),
+                      onPressed: _isWriting ? () => _submitMsg(_textController.text)
+                          : null
+                  )
+                      : new IconButton(
+                    icon: new Icon(Icons.message),
+                    onPressed: _isWriting
+                        ? () => _submitMsg(_textController.text)
+                        : null,
+                  )
+              ),
+            ],
+          ),
+          decoration: Theme.of(context).platform == TargetPlatform.iOS
+              ? new BoxDecoration(
+              border:
+              new Border(top: new BorderSide(color: Colors.brown))) :
+          null
+      ),
+    );
+  }
+
+  void _submitMsg(String txt) {
+    _textController.clear();
+    setState(() {
+      _isWriting = false;
+    });
+    Msg msg = new Msg(
+      txt: txt,
+      animationController: new AnimationController(
+          vsync: this,
+          duration: new Duration(milliseconds: 800)
+      ),
+    );
+    setState(() {
+      _messages.insert(0, msg);
+    });
+    msg.animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    for (Msg msg in _messages) {
+      msg.animationController.dispose();
+    }
+    super.dispose();
+  }
+
 }
