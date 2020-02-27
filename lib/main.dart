@@ -201,18 +201,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   CupertinoActionSheetAction(
                     child: const Text('IniciarSesion'),
                     onPressed: () {
+                      Navigator.pop(context);
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => SigninPage()),
-                      );
-                    },
-                  ),
-                  CupertinoActionSheetAction(
-                    child: const Text('Registrarse'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignupPage()),
                       );
                     },
                   ),

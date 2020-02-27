@@ -1,6 +1,8 @@
+import 'package:dibujillo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 
 class SignupPage extends StatefulWidget {
@@ -31,11 +33,12 @@ class _SignupPageState extends State<SignupPage> {
         print('error $_email');
         AuthResult user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
         Firestore.instance.collection('usuario').add({
-          "verificado" : false,
+          "nickname" : _nickname,
           "email" : _email,
         });
         print('Registrado');
-        Navigator.of(context).pushNamed('/home');
+        Navigator.popUntil(context, ModalRoute.withName('/'));
+
       }
       catch(e){
         print('error');
