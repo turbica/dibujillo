@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Controladores/Dibujo.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
+import 'package:dibujillo/Vistas/Registrase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:dibujillo/Vistas/InicioSesion.dart';
 
 void main() {
   runApp(
@@ -21,6 +25,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
@@ -36,7 +41,11 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      routes: <String, WidgetBuilder>{
+        '/signin': (BuildContext context) => new SigninPage(),
+        '/signup': (BuildContext context) => new SignupPage(),
+      },
+      home: MyHomePage(title: 'Dibujillo Demo Home Page'),
     );
   }
 }
@@ -57,38 +66,47 @@ class _MyHomePageState extends State<MyHomePage> {
   void _showDialog() async {
     // flutter defined function
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: Text("Elije un color"),
-          content: MaterialColorPicker(
-
-            allowShades: true, // default true
-            onMainColorChange: (ColorSwatch color) {
-              colorTrazo = Color.fromRGBO(color.red, color.green, color.blue, color.opacity);
-              Navigator.pop(context);
-            },
-            selectedColor: colorTrazo,
-          ),
-        );
-      }
-      );
+        context: context,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return AlertDialog(
+            title: Text("Elije un color"),
+            content: Container(
+              child: MaterialColorPicker(
+                shrinkWrap: true,
+                allowShades: false, // default true
+                onMainColorChange: (ColorSwatch color) {
+                  colorTrazo = Color.fromRGBO(
+                      color.red, color.green, color.blue, color.opacity);
+                  Navigator.pop(context);
+                },
+                selectedColor: colorTrazo,
+              ),
+            ),
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
+    Dibujo dibu = Provider.of<Dibujo>(context);
+    double ancho = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
         child: Consumer<Dibujo>(
           builder: (context, dibujo, child) {
-            return Padding(
-              padding: const EdgeInsets.all(0.0),
+            if (dibujo.points.length > newPoints.length) newPoints.clear();
+            bool soyMasPequeno = ancho < dibujo.anchoLienzo;
+            return Transform.scale(
+              scale: soyMasPequeno ? 1 : ancho / dibujo.anchoLienzo,
+              alignment: Alignment.topLeft,
               child: Container(
-                decoration:
-                    BoxDecoration(border: Border.all(color: Colors.black)),
-                // Center is a layout widget. It takes a single child and positions it
-                // in the middle of the parent.
+                width: soyMasPequeno ? ancho : dibujo.anchoLienzo,
+                height: soyMasPequeno ? ancho : dibujo.anchoLienzo,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  shape: BoxShape.rectangle
+                ),
                 child: GestureDetector(
                   onPanUpdate: (DragUpdateDetails details) {
                     setState(() {
@@ -97,9 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           renderBox.globalToLocal(details.globalPosition);
                       newPoints.add(Trazo(_localPosition, colorTrazo));
                     });
-
-                    //print("dibujo actualizado");
-                  },
+                    },
                   onPanEnd: (DragEndDetails details) {
                     newPoints.add(null);
                     List<Map<String, dynamic>> aux = List();
@@ -124,18 +140,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         .updateData({
                       "points": FieldValue.arrayUnion(aux),
                     });
-                    newPoints.clear();
                     dibujo.updateSeperador();
                   },
                   child: Stack(children: [
-                    CustomPaint(
-                        painter:
-                            new Pantalla(trazos: dibujo.points, refresh: false),
-                        size: Size.infinite),
-                    CustomPaint(
-                        // Esto aun no se por que no va
-                        painter: new Pantalla(trazos: newPoints, refresh: true),
-                        size: Size.infinite),
+                    ClipRect(
+                      child: CustomPaint(
+                          painter:
+                              new Pantalla(trazos: dibujo.points, refresh: false),
+                          size: Size(ancho, ancho),
+                      ),
+                    ),
+                    ClipRect(
+                      child: CustomPaint(
+                          // Esto aun no se por que no va
+                          painter: new Pantalla(trazos: newPoints, refresh: true),
+                          size: Size(ancho, ancho)),
+                    ),
                   ]),
                 ),
               ),
@@ -148,15 +168,23 @@ class _MyHomePageState extends State<MyHomePage> {
           showCupertinoModalPopup(
             context: context,
             builder: (BuildContext context) => CupertinoActionSheet(
-                title: const Text('Choose Options'),
-                message: const Text('Your options are '),
+                title: const Text('Opciones'),
                 actions: <Widget>[
                   CupertinoActionSheetAction(
                     child: const Text('Color'),
                     onPressed: () {
                       Navigator.pop(context, 'Color');
                       _showDialog();
-
+                    },
+                  ),
+                  CupertinoActionSheetAction(
+                    child: const Text('Lienzo'),
+                    onPressed: () {
+                      Firestore.instance
+                          .collection('dibujo')
+                          .document('uno')
+                          .updateData({"anchoLienzo": ancho});
+                      Navigator.pop(context, 'Lienzo');
                     },
                   ),
                   CupertinoActionSheetAction(
@@ -165,16 +193,35 @@ class _MyHomePageState extends State<MyHomePage> {
                       Firestore.instance
                           .collection('dibujo')
                           .document('uno')
-                          .setData({"points": []});
+                          .updateData({"points": []});
                       Navigator.pop(context, 'Borrar');
+                      dibu.separadores = 1;
                     },
-                  )
+                  ),
+                  CupertinoActionSheetAction(
+                    child: const Text('IniciarSesion'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SigninPage()),
+                      );
+                    },
+                  ),
+                  CupertinoActionSheetAction(
+                    child: const Text('Registrarse'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignupPage()),
+                      );
+                    },
+                  ),
                 ],
                 cancelButton: CupertinoActionSheetAction(
-                  child: const Text('Cancel'),
+                  child: const Text('Cancelar'),
                   isDefaultAction: true,
                   onPressed: () {
-                    Navigator.pop(context, 'Cancel');
+                    Navigator.pop(context, 'Cancelar');
                   },
                 )),
           );
