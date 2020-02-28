@@ -144,15 +144,15 @@ class PrincipalPageState extends State<PrincipalPage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.videogame_asset),
-            title: Text('Plays'),
+            title: Text('Juegos'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people),
-            title: Text('Friends'),
+            title: Text('Amigos'),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_basket),
-            title: Text('Shop'),
+            title: Text('Tienda'),
           ),
         ],
         backgroundColor: Colors.green,
