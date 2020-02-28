@@ -76,14 +76,14 @@ class PrincipalPageState extends State<PrincipalPage> {
                       textColor: Colors.white,
                       child: Container(
                         alignment: Alignment.center,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
                               Colors.green[900],
                               Colors.green[700],
                               Colors.green[300]
-                            ],
-                          ),
+                            ]
+                          )
                         ),
                         padding: const EdgeInsets.all(10.0),
                         child: const Text(
@@ -92,11 +92,72 @@ class PrincipalPageState extends State<PrincipalPage> {
                         ),
                       ),
                     ),
+                    new RaisedButton(
+                      onPressed: (){},
+                      textColor: Colors.white,
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: [
+                                  Colors.green[900],
+                                  Colors.green[700],
+                                  Colors.green[300]
+                                ]
+                            )
+                        ),
+                        padding: const EdgeInsets.all(10.0),
+                        child: const Text(
+                            'JUEGA CON AMIGOS',
+                            style: TextStyle(fontSize: 20)
+                        ),
+                      ),
+                    ),
+                    new RaisedButton(
+                      onPressed: (){},
+                      textColor: Colors.white,
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: [
+                                  Colors.green[900],
+                                  Colors.green[700],
+                                  Colors.green[300]
+                                ]
+                            )
+                        ),
+                        padding: const EdgeInsets.all(10.0),
+                        child: const Text(
+                            'PARTIDA POR EQUIPOS',
+                            style: TextStyle(fontSize: 20)
+                        ),
+                      ),
+                    ),
                   ],
                 )
             )
           ],
         ),
-      ),);
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.videogame_asset),
+            title: Text('Plays'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            title: Text('Friends'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_basket),
+            title: Text('Shop'),
+          ),
+        ],
+        backgroundColor: Colors.green,
+        fixedColor: Colors.white,
+    ),
+    );
   }
 }
