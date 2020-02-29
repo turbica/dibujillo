@@ -148,66 +148,63 @@ class _SigninPageState extends State<SigninPage> {
                             ),
                           ),
                           SizedBox(height: 40.0),
-                          InkWell(
-                            onTap: () {
-                              validateAndSubmit();
-                              // Navigator.of(context).pushNamed('/home');
-                            },
-                            child: Container(
-                              height: 40.0,
-                              child: Material(
-                                borderRadius: BorderRadius.circular(20.0),
-                                shadowColor: Colors.green,
-                                color: Colors.green,
-                                elevation: 7.0,
+                          Center(
+                            child: Material(
+                              borderRadius: BorderRadius.circular(80.0),
+                              shadowColor: Colors.black,
+                              color: Colors.green,
+                              elevation: 7.0,
+                              child: FloatingActionButton(
+                                backgroundColor: Colors.green,
+                                elevation: 0,
+                                onPressed: () => {},
                                 child: GestureDetector(
                                   onTap: () {
                                     //validateAndSubmit();
                                     //Navigator.of(context).pushNamed('/home');
                                   },
-                                  child: Center(
-                                    child: Text(
-                                      'LOGIN',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Montserrat'),
-                                    ),
+                                  child: Text(
+                                      'GO',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Montserrat'),
                                   ),
-                                ),
-                              ),
-                            ),
+                                )
+                              )
+                            )
                           ),
-                          SizedBox(height: 20.0),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Nuevo en Dibujillo ?',
+                                style: TextStyle(fontFamily: 'Montserrat'),
+                              ),
+                              SizedBox(width: 5.0),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  Navigator.of(context).pushNamed('/signup');
+                                },
+                                child: Text(
+                                  'Registrarse',
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline),
+                                ),
+                              )
+                            ],
+                          ),
                         ],
-                      ))),
-              SizedBox(height: 15.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Nuevo en Buyu ?',
-                    style: TextStyle(fontFamily: 'Montserrat'),
+                      ),
                   ),
-                  SizedBox(width: 5.0),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).pushNamed('/signup');
-                    },
-                    child: Text(
-                      'Registrarse',
-                      style: TextStyle(
-                          color: Colors.green,
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.bold,
-                          decoration: TextDecoration.underline),
-                    ),
-                  )
-                ],
               ),
             ],
           ),
-        ),);
+        ),
+    );
   }
 }

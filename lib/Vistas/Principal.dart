@@ -119,13 +119,7 @@ class PrincipalPageState extends State<PrincipalPage> {
                       child: Container(
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [
-                                  Colors.green[900],
-                                  Colors.green[700],
-                                  Colors.green[300]
-                                ]
-                            )
+                          color: Colors.green,
                         ),
                         padding: const EdgeInsets.all(10.0),
                         child: const Text(
