@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dibujillo/Vistas/Partida.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -72,7 +73,12 @@ class PrincipalPageState extends State<PrincipalPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     new RaisedButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Partida()),
+                        );
+                      },
                       textColor: Colors.white,
                       child: Container(
                         alignment: Alignment.center,
