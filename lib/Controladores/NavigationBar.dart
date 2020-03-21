@@ -23,11 +23,11 @@ class _NavigationBarState extends State<NavigationBar> {
   Widget build(BuildContext context) {
     return new Scaffold(
         body: pages[selectedPageIndex],
-        backgroundColor: Color(0xffbdfccf),
+        backgroundColor: Color(0xff61ffa6),
         bottomNavigationBar: new Theme(
             data: Theme.of(context).copyWith(
               // sets the background color of the `BottomNavigationBar`
-                canvasColor: Color(0xffbdfccf),
+                canvasColor: Color(0xff61ffa6),
                 textTheme: Theme
                     .of(context)
                     .textTheme

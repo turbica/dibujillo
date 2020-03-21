@@ -12,19 +12,33 @@ class SocialState extends State<Social> {
     @override
     Widget build(BuildContext context) {
       return Scaffold(
-        drawer: Drawer(
+        appBar: AppBar(
+          title: Text("SOCIAL"),
+          backgroundColor: Color(0xff61ffa6),
+          leading: Padding(
+            padding: EdgeInsets.only(left:12),
+            child: Image.asset(
+              'images/logoChiqui.png',
+              fit: BoxFit.cover,
+            )
+          )
+        ),
+        endDrawer: Drawer(
           child: ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
-              DrawerHeader(
-                child: Text('Drawer Header'),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
+              UserAccountsDrawerHeader(
+                accountName: new Text('Lucía'),
+                currentAccountPicture: new GestureDetector(
+                  child: new CircleAvatar(
+                    backgroundImage: new NetworkImage(""),
+                  )
                 ),
               ),
               ListTile(
                 title: Text('Editar perfil'),
+                trailing: new Icon(Icons.edit),
                 onTap: () {
                   // Update the state of the app.
                   // ...
@@ -32,6 +46,7 @@ class SocialState extends State<Social> {
               ),
               ListTile(
                 title: Text('Cerrar sesión'),
+                trailing: new Icon(Icons.exit_to_app),
                 onTap: () {
                   // Update the state of the app.
                   // ...
@@ -39,7 +54,8 @@ class SocialState extends State<Social> {
               ),
             ],
           ),
-        )
+        ),
+        backgroundColor: Color(0xffbdfccf),
       );
     }
 }
