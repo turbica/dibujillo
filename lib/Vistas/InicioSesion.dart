@@ -30,7 +30,7 @@ class _SigninPageState extends State<SigninPage> {
         AuthResult user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
         print('entrado');
-        Navigator.of(context).pushNamed('/home');
+        Navigator.of(context).pushNamed('/');
       } catch (e) {
         muestra_error();
         print('error $_email');

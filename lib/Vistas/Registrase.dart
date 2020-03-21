@@ -37,7 +37,7 @@ class _SignupPageState extends State<SignupPage> {
           "email" : _email,
         });
         print('Registrado');
-        Navigator.popUntil(context, ModalRoute.withName('/'));
+        Navigator.popUntil(context, ModalRoute.withName('/principal'));
 
       }
       catch(e){

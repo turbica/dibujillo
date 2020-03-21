@@ -3,12 +3,12 @@ import 'package:dibujillo/Vistas/Partida.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class PrincipalPage extends StatefulWidget {
+class Principal extends StatefulWidget {
   @override
-  PrincipalPageState createState() => PrincipalPageState();
+  PrincipalState createState() => PrincipalState();
 }
 
-class PrincipalPageState extends State<PrincipalPage> {
+class PrincipalState extends State<Principal> {
   void muestra_error() {
     bool _visible = true;
 
@@ -119,45 +119,12 @@ class PrincipalPageState extends State<PrincipalPage> {
                         ),
                       ),
                     ),
-                    new RaisedButton(
-                      onPressed: (){},
-                      textColor: Colors.white,
-                      child: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                        ),
-                        padding: const EdgeInsets.all(10.0),
-                        child: const Text(
-                            'PARTIDA POR EQUIPOS',
-                            style: TextStyle(fontSize: 20)
-                        ),
-                      ),
-                    ),
                   ],
                 )
             )
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.videogame_asset),
-            title: Text('Juegos'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            title: Text('Amigos'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_basket),
-            title: Text('Tienda'),
-          ),
-        ],
-        backgroundColor: Colors.green,
-        fixedColor: Colors.white,
-    ),
     );
   }
 }
