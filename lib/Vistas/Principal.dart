@@ -1,3 +1,5 @@
+import 'package:dibujillo/Vistas/PrincipalAmigos.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dibujillo/Vistas/Partida.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,122 +11,68 @@ class Principal extends StatefulWidget {
 }
 
 class PrincipalState extends State<Principal> {
-  void muestra_error() {
-    bool _visible = true;
-
-    @override
-    Widget build(BuildContext context) {
-      return Scaffold(
-        body: Center(
-          child: AnimatedOpacity(
-            // Si el Widget debe ser visible, anime a 1.0 (completamente visible). Si
-            // el Widget debe estar oculto, anime a 0.0 (invisible).
-            opacity: _visible ? 1.0 : 0.0,
-            duration: Duration(milliseconds: 500),
-            // El cuadro verde debe ser el hijo de AnimatedOpacity
-            child: Container(
-              width: 200.0,
-              height: 200.0,
-              color: Colors.green,
-            ),
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Asegúrate de llamar a setState. Esto le dice a Flutter que reconstruya el
-            // UI con los cambios!
-            setState(() {
-              _visible = !_visible;
-            });
-          },
-          tooltip: 'Toggle Opacity',
-          child: Icon(Icons.flip),
-        ), // Esta coma final hace que el auto-formateo sea más agradable para los métodos de construcción.
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      backgroundColor: Colors.white,
+    return Scaffold(
+      appBar: AppBar(
+          title: Text("PRINCIPAL"),
+          backgroundColor: Color(0xff61ffa6),
+          leading: Padding(
+              padding: EdgeInsets.only(left:12),
+              child: Image.asset(
+                'images/logoChiqui.png',
+                fit: BoxFit.cover,
+              )
+          )
+      ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 50.0),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    //padding: EdgeInsets.fromLTRB(50.0, 140.0, 0.0, 0.0),
-                    child: Center(
-                      child: Image.asset('images/dibujillo.jpeg'),
-                    ),
-                  ),
-                ],
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            new RaisedButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Partida()),
+                );
+              },
+              textColor: Colors.white,
+              child: Container(
+                color: Color(0xff61ffa6),
+                alignment: Alignment.center,
+                padding: const EdgeInsets.only(bottom: 15,top: 15),
+                child: const Text(
+                    'PARTIDA',
+                    style: TextStyle(fontSize: 20)
+                ),
               ),
             ),
-            Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    new RaisedButton(
-                      onPressed: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Partida()),
-                        );
-                      },
-                      textColor: Colors.white,
-                      child: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.green[900],
-                              Colors.green[700],
-                              Colors.green[300]
-                            ]
-                          )
-                        ),
-                        padding: const EdgeInsets.all(10.0),
-                        child: const Text(
-                          'JUGAR',
-                          style: TextStyle(fontSize: 20)
-                        ),
-                      ),
-                    ),
-                    new RaisedButton(
-                      onPressed: (){},
-                      textColor: Colors.white,
-                      child: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: [
-                                  Colors.green[900],
-                                  Colors.green[700],
-                                  Colors.green[300]
-                                ]
-                            )
-                        ),
-                        padding: const EdgeInsets.all(10.0),
-                        child: const Text(
-                            'JUEGA CON AMIGOS',
-                            style: TextStyle(fontSize: 20)
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-            )
+            new RaisedButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PrincipalAmigos()),
+                );
+              },
+              textColor: Colors.white,
+              child: Container(
+                alignment: Alignment.center,
+                color: Color(0xff61ffa6),
+                padding: const EdgeInsets.all(15.0),
+                child: const Text(
+                    'JUEGA CON AMIGOS',
+                    style: TextStyle(fontSize: 20)
+                ),
+              ),
+            ),
           ],
+            ),
         ),
-      ),
+        backgroundColor: Color(0xffbdfccf),
     );
   }
 }
+
