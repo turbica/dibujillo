@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dibujillo/CHATILI/Chat.dart';
+import 'package:dibujillo/Chat/Chat.dart';
 import 'package:dibujillo/Controladores/Dibujo.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
 import 'package:dibujillo/Vistas/Principal.dart';
