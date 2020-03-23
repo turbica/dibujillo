@@ -1,6 +1,6 @@
 import 'package:dibujillo/Controladores/Dibujo.dart';
 import 'package:dibujillo/Vistas/Registrase.dart';
-import 'package:dibujillo/Controladores/NavigationBar.dart';
+import 'package:dibujillo/NavigationBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';

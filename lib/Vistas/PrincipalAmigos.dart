@@ -103,7 +103,7 @@ class PrincipalAmigosState extends State<PrincipalAmigos> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Partida()),
+                            MaterialPageRoute(builder: (context) => MyHomePage()),
                           );
                         },
                         heroTag: "first",
@@ -187,7 +187,7 @@ class PrincipalAmigosState extends State<PrincipalAmigos> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Partida()),
+                            MaterialPageRoute(builder: (context) => MyHomePage()),
                           );
                         },
                         heroTag: "second",

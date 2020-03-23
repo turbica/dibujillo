@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,20 +18,22 @@ class _SigninPageState extends State<SigninPage> {
     final form = formKey.currentState;
     if (form.validate()) {
       form.save();
+      print('form true');
       return true;
     } else {
+      print('form false');
       return false;
     }
   }
 
   void validateAndSubmit() async {
     if (validateAndSave()) {
+      print('validado');
       try {
         //FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password);
-        AuthResult user = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: _email, password: _password);
+        AuthResult user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password);
         print('entrado');
-        Navigator.of(context).pushNamed('/');
+        //Navigator.of(context).pushNamed('/');
       } catch (e) {
         muestra_error();
         print('error $_email');
@@ -76,135 +79,126 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 50.0),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      //padding: EdgeInsets.fromLTRB(50.0, 140.0, 0.0, 0.0),
-                      child: Center(
-                        child: Image.asset('images/dibujillo.jpeg'),
-                      ),
+      backgroundColor: Colors.white,
+      body: Container(
+        height: double.infinity,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: Center(
+                      child: Image.asset('images/dibujillo.jpeg'),
                     ),
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  ),
                 ),
-              ),
-              Container(
-                  child: new Form(
-                      key: formKey,
-                      child: Column(
-                        children: <Widget>[
-                          new TextFormField(
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  labelText: 'EMAIL',
-                                  labelStyle: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey),
-                                  focusedBorder: UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.green))),
-                              validator: (value) =>
-                                  value.isEmpty ? 'email esta vacio' : null,
-                              onSaved: (value) => _email = value),
-                          SizedBox(height: 20.0),
-                          new TextFormField(
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  labelText: 'CONTRASEÑA',
-                                  labelStyle: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey),
-                                  focusedBorder: UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.green))),
-                              obscureText: true,
-                              validator: (value) =>
-                                  value.isEmpty ? 'contraseña esta vacio' : null,
-                              onSaved: (value) => _password = value),
-                          SizedBox(height: 5.0),
-                          Container(
-                            alignment: Alignment(1.0, 0.0),
-                            padding: EdgeInsets.only(top: 15.0, left: 20.0),
-                            child: InkWell(
-                              child: Text(
-                                'Olvidaste la contraseña?',
-                                style: TextStyle(
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Montserrat',
-                                    decoration: TextDecoration.underline),
+                Form(
+                  key: formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        TextFormField(
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              labelText: 'Correo electrónico',
+                              labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
+                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.green))),
+                          validator: (value) => value.isEmpty ? 'Debe proporcionar un email' : null,
+                          onSaved: (value) => _email = value,
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            labelText: 'Contraseña',
+                            labelStyle: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green),
+                            ),
+                          ),
+                          obscureText: true,
+                          validator: (value) => value.isEmpty ? 'Debe introducir una constraseña' : null,
+                          onSaved: (value) => _password = value,
+                        ),
+                        SizedBox(height: 5.0),
+                        Container(
+                          alignment: Alignment(1.0, 0.0),
+                          padding: EdgeInsets.only(top: 15.0, left: 20.0),
+                          child: InkWell(
+                            child: Text(
+                              'Olvidaste la contraseña?',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Montserrat',
+                                decoration: TextDecoration.underline,
                               ),
                             ),
                           ),
-                          SizedBox(height: 40.0),
-                          Center(
-                            child: Material(
-                              borderRadius: BorderRadius.circular(80.0),
-                              shadowColor: Colors.black,
-                              color: Colors.green,
-                              elevation: 7.0,
-                              child: FloatingActionButton(
-                                backgroundColor: Colors.green,
-                                elevation: 0,
-                                onPressed: () => {},
-                                child: GestureDetector(
-                                  onTap: () {
-                                    validateAndSubmit();
-                                    Navigator.of(context).pushNamed('/principal');
-                                  },
-                                  child: Text(
-                                      'GO',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Montserrat'),
-                                  ),
-                                )
-                              )
-                            )
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                'Nuevo en Dibujillo ?',
-                                style: TextStyle(fontFamily: 'Montserrat'),
+                        ),
+                        SizedBox(height: 30.0),
+                        Center(
+                          child: Material(
+                            borderRadius: BorderRadius.circular(80.0),
+                            shadowColor: Colors.black,
+                            color: Colors.green,
+                            elevation: 7.0,
+                            child: FloatingActionButton(
+                              backgroundColor: Colors.green,
+                              elevation: 0,
+                              onPressed: () {
+                                validateAndSubmit();
+                                Navigator.of(context).pushNamed('/principal');
+                              },
+                              child: Text(
+                                'GO',
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
                               ),
-                              SizedBox(width: 5.0),
-                              InkWell(
-                                onTap: () {
-                                  //Navigator.pop(context);
-                                  Navigator.of(context).pushNamed('/signup');
-                                },
-                                child: Text(
-                                  'Registrarse',
-                                  style: TextStyle(
-                                      color: Colors.green,
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.bold,
-                                      decoration: TextDecoration.underline),
-                                ),
-                              )
-                            ],
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(height: 30.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'Nuevo en Dibujillo ?',
+                              style: TextStyle(fontFamily: 'Montserrat'),
+                            ),
+                            SizedBox(width: 5.0),
+                            InkWell(
+                              onTap: () {
+                                //Navigator.pop(context);
+                                Navigator.of(context).pushNamed('/signup');
+                              },
+                              child: Text(
+                                'Registrarse',
+                                style: TextStyle(
+                                    color: Colors.green, fontFamily: 'Montserrat', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
+      ),
     );
   }
 }

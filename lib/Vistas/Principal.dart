@@ -15,17 +15,19 @@ class PrincipalState extends State<Principal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text("PRINCIPAL"),
-          backgroundColor: Color(0xff61ffa6),
-          leading: Padding(
-              padding: EdgeInsets.only(left: 12),
-              child: Image.asset(
-                'images/logoChiqui.png',
-                fit: BoxFit.cover,
-              ))),
+        title: Text("PRINCIPAL"),
+        backgroundColor: Color(0xff61ffa6),
+        leading: Padding(
+          padding: EdgeInsets.only(left: 12),
+          child: Image.asset(
+            'images/logoChiqui.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
-         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             new Card(
               borderOnForeground: true,
@@ -34,7 +36,7 @@ class PrincipalState extends State<Principal> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Partida()),
+                    MaterialPageRoute(builder: (context) => MyHomePage()),
                   );
                 },
                 color: Color(0xff61ffa6),
@@ -61,8 +63,7 @@ class PrincipalState extends State<Principal> {
                 child: Container(
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(15.0),
-                  child: const Text('JUEGA CON AMIGOS',
-                      style: TextStyle(fontSize: 20)),
+                  child: const Text('JUEGA CON AMIGOS', style: TextStyle(fontSize: 20)),
                 ),
               ),
             ),

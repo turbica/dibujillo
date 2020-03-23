@@ -15,21 +15,6 @@ final ThemeData androidTheme = new ThemeData(
 
 const String defaultUserName = "John Doe";
 
-void main() => runApp(new MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext ctx) {
-    return new MaterialApp(
-      title: "Chat Application",
-      theme: defaultTargetPlatform == TargetPlatform.iOS
-          ? iOSTheme
-          : androidTheme,
-      home: new Chat(),
-    );
-  }
-}
-
 class Chat extends StatefulWidget {
   @override
   State createState() => new ChatWindow();

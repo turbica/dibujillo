@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../Vistas/Principal.dart';
-import '../Vistas/Social.dart';
-import '../Vistas/Tienda.dart';
+import 'Vistas/Principal.dart';
+import 'Vistas/Social.dart';
+import 'Vistas/Tienda.dart';
 
 class NavigationBar extends StatefulWidget {
   @override
@@ -12,6 +12,7 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar> {
 
   var selectedPageIndex = 0;
+  PageController pageController;
 
   var pages = [
   Principal(),
@@ -20,9 +21,28 @@ class _NavigationBarState extends State<NavigationBar> {
   ];
 
   @override
+  void initState() {
+    pageController = PageController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        body: pages[selectedPageIndex],
+        body: PageView(
+          controller: pageController,
+          children: pages,
+          onPageChanged: (index) {
+            setState(() {
+              selectedPageIndex = index;
+            });
+          },
+        ),
         backgroundColor: Color(0xff61ffa6),
         bottomNavigationBar: new Theme(
             data: Theme.of(context).copyWith(
@@ -50,6 +70,7 @@ class _NavigationBarState extends State<NavigationBar> {
               onTap: (index) {
                 setState(() {
                   selectedPageIndex = index;
+                  pageController.animateToPage(index, duration: Duration(milliseconds: 1), curve: Curves.linear);
                 });
               },
               currentIndex: selectedPageIndex,
