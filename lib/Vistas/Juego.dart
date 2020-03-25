@@ -1,11 +1,8 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dibujillo/Chat/Chat.dart';
 import 'package:dibujillo/Controladores/Dibujo.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
-import 'package:dibujillo/Vistas/Principal.dart';
-import 'package:dibujillo/Vistas/Registrase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -13,18 +10,17 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:dibujillo/Vistas/InicioSesion.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class Juego extends StatefulWidget {
+  Juego({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _JuegoState createState() => _JuegoState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   List<Trazo> newPoints = [];
   Color colorTrazo = Colors.black;
 
@@ -71,7 +67,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           title: Text("Fin del turno"),
           actions: <Widget>[
             FlatButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
               child: Text('Siguiente ronda'),
             ),
           ],
@@ -191,8 +190,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               child: const Text('Lienzo'),
               onPressed: () {
                 Firestore.instance
-                    .collection('dibujo')
-                    .document('uno')
+                    .collection('partidas')
+                    .document('prueba')
                     .updateData({"anchoLienzo": ancho});
               },
             ),
@@ -249,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                       aux.add({"x": trazo.offset.dx, "y": trazo.offset.dy, "color": trazo.color.toString().substring(6, 16)});
                                     }
                                   }
-                                  Firestore.instance.collection('dibujo').document('uno').updateData({
+                                  Firestore.instance.collection('partidas').document('prueba').updateData({
                                     "points": FieldValue.arrayUnion(aux),
                                   });
                                   dibujo.updateSeperador();
@@ -282,7 +281,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                     heroTag: 'buttonBorrar',
                                     onPressed: () {
                                       dibu.separadores = 1;
-                                      Firestore.instance.collection('dibujo').document('uno').updateData({"points": []});
+                                      Firestore.instance.collection('partidas').document('prueba').updateData({"points": []});
                                       setState(() {
                                         newPoints = [];
                                       });
@@ -368,4 +367,43 @@ class Pantalla extends CustomPainter {
 
   @override
   bool shouldRepaint(Pantalla oldDelegate) => refresh || oldDelegate.trazos != trazos;
+}
+
+class Msg extends StatelessWidget {
+  Msg({this.txt, this.animationController});
+  final String txt;
+  final AnimationController animationController;
+
+  @override
+  Widget build(BuildContext ctx) {
+    return new SizeTransition(
+      sizeFactor: new CurvedAnimation(
+          parent: animationController, curve: Curves.easeOut),
+      axisAlignment: 0.0,
+      child: new Container(
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Container(
+              margin: const EdgeInsets.only(right: 18.0),
+              child: new CircleAvatar(child: new Text('J')),
+            ),
+            new Expanded(
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text('Jorge', style: Theme.of(ctx).textTheme.subhead),
+                  new Container(
+                    margin: const EdgeInsets.only(top: 6.0),
+                    child: new Text(txt),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

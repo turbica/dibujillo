@@ -1,18 +1,20 @@
 import 'package:dibujillo/Controladores/Dibujo.dart';
-import 'package:dibujillo/Vistas/Registrase.dart';
+import 'package:dibujillo/Controladores/Sesion.dart';
+import 'package:dibujillo/Vistas/SignupPage.dart';
 import 'package:dibujillo/NavigationBar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:dibujillo/Vistas/InicioSesion.dart';
+import 'package:dibujillo/Vistas/SigninPage.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<Dibujo>(create: (context) => Dibujo()),
+        ChangeNotifierProvider<Sesion>(create: (context) => Sesion()),
       ],
       child: MyApp(),
     ),

@@ -1,7 +1,7 @@
 import 'package:dibujillo/Vistas/PrincipalAmigos.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dibujillo/Vistas/Partida.dart';
+import 'package:dibujillo/Vistas/Juego.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -36,7 +36,7 @@ class PrincipalState extends State<Principal> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MyHomePage()),
+                    MaterialPageRoute(builder: (context) => Juego()),
                   );
                 },
                 color: Color(0xff61ffa6),

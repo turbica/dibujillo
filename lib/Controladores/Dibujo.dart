@@ -1,8 +1,6 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class Dibujo extends ChangeNotifier {
 
@@ -17,8 +15,8 @@ class Dibujo extends ChangeNotifier {
   }
 
   escucharDibujo() {
-    Firestore.instance.collection('dibujo').document('uno').snapshots().listen((dibujo) {
-      dibujo.data["anchoLienzo"] != null ? anchoLienzo = dibujo.data["anchoLienzo"] : 10000;
+    Firestore.instance.collection('partidas').document('prueba').snapshots().listen((dibujo) {
+      dibujo.data["anchoLienzo"] != null ? anchoLienzo = dibujo.data["anchoLienzo"].toDouble() : 10000;
       List a = dibujo.data["points"];
       List<Trazo> aux = List();
       for(var b in a){
