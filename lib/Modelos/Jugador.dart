@@ -6,4 +6,11 @@ class Jugador {
 
   Jugador(this.usuario, this.score);
 
+  static Jugador decodeJugador(Map<String, dynamic> jugador) {
+    return Jugador(
+      Usuario.decodeUsuario(jugador['usuario']),
+      jugador['score'],
+    );
+  }
+
 }

@@ -1,4 +1,3 @@
-import 'package:dibujillo/Controladores/Dibujo.dart';
 import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:dibujillo/Vistas/SignupPage.dart';
 import 'package:dibujillo/NavigationBar.dart';
@@ -13,7 +12,6 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<Dibujo>(create: (context) => Dibujo()),
         ChangeNotifierProvider<Sesion>(create: (context) => Sesion()),
       ],
       child: MyApp(),

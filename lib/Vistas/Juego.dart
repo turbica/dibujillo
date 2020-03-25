@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dibujillo/Controladores/Dibujo.dart';
+import 'package:dibujillo/Controladores/Sesion.dart';
+import 'package:dibujillo/Modelos/Mensaje.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
+import 'package:dibujillo/Modelos/Usuario.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,22 +14,20 @@ import 'package:flutter_material_color_picker/flutter_material_color_picker.dart
 import 'package:provider/provider.dart';
 
 class Juego extends StatefulWidget {
-  Juego({Key key, this.title}) : super(key: key);
-
-  final String title;
-
   @override
   _JuegoState createState() => _JuegoState();
 }
 
 class _JuegoState extends State<Juego> with TickerProviderStateMixin {
+  Sesion sesion;
+
   List<Trazo> newPoints = [];
   Color colorTrazo = Colors.black;
 
   int contador = 60;
   Timer timer;
 
-  final List<Msg> _messages = <Msg>[];
+  List<Msg> _mensajes = List();
   final TextEditingController _textController = new TextEditingController();
   bool _isWriting = false;
   bool tecladoUp = false;
@@ -45,15 +45,13 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
         _showFinRonda();
       }
     });
+
     super.initState();
   }
 
   @override
   void dispose() {
     timer.cancel();
-    for (Msg msg in _messages) {
-      msg.animationController.dispose();
-    }
     super.dispose();
   }
 
@@ -103,7 +101,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildComposer() {
+  Widget _buildComposer(Usuario usuario) {
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).accentColor),
       child: Container(
@@ -135,7 +133,11 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                       tecladoUp = true;
                     });
                   },
-                  onSubmitted: _isWriting && _textController.text.trim().isNotEmpty ? _submitAndClose : null,
+                  onSubmitted: (value) {
+                    if (_isWriting && _textController.text.trim().isNotEmpty) {
+                      _submitAndClose(usuario, _textController.text);
+                    }
+                  },
                   decoration: InputDecoration.collapsed(hintText: "Enter some text to send a message"),
                 ),
               ),
@@ -144,7 +146,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
               margin: EdgeInsets.symmetric(horizontal: 3.0),
               child: IconButton(
                 icon: Icon(Icons.send),
-                onPressed: _isWriting && _textController.text.trim().isNotEmpty ? () => _submitMsg(_textController.text) : null,
+                onPressed: _isWriting && _textController.text.trim().isNotEmpty ? () => _submitMsg(usuario, _textController.text) : null,
               ),
             ),
           ],
@@ -153,32 +155,54 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     );
   }
 
-  void _submitAndClose(String txt) {
-    _submitMsg(txt);
-    if (txt.isEmpty) tecladoUp = false;
+  void _submitAndClose(Usuario usuario, String contenido) {
+    _submitMsg(usuario, contenido);
+    if (contenido.isEmpty) tecladoUp = false;
   }
 
-  void _submitMsg(String txt) {
+  void _submitMsg(Usuario usuario, String contenido) {
     _textController.clear();
     setState(() {
       _isWriting = false;
     });
     Msg msg = new Msg(
-      txt: txt,
+      palabra: sesion.partidaActual.palabra,
+      mensaje: Mensaje(
+        usuario,
+        contenido,
+        Timestamp.now().toDate(),
+      ),
       animationController: new AnimationController(vsync: this, duration: new Duration(milliseconds: 800)),
     );
-    setState(() {
-      _messages.insert(0, msg);
+    /*setState(() {
+      _messages.add(msg);
     });
-    msg.animationController.forward();
-    if (txt.isEmpty) tecladoUp = false;
+    msg.animationController.forward();*/
+    List<Map<String, dynamic>> nuevoMensaje = List();
+    nuevoMensaje.add({
+      "usuario": {
+        "amigos": [],
+        "apodo": usuario.apodo,
+        "colores": [],
+        "email": usuario.email,
+        "iconos": [],
+        "monedas": usuario.monedas,
+        "solicitudes": [],
+        "total_puntos": usuario.total_puntos,
+      },
+      "contenido": contenido,
+      "timestamp": Timestamp.now(),
+    });
+    Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
+      "chat": FieldValue.arrayUnion(nuevoMensaje),
+    });
+    if (contenido.isEmpty) tecladoUp = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    Dibujo dibu = Provider.of<Dibujo>(context);
+    sesion = Provider.of<Sesion>(context, listen: false);
     double ancho = MediaQuery.of(context).size.width;
-    Firestore.instance.collection('a').document().get();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -215,23 +239,24 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Consumer<Dibujo>(
-                  builder: (context, dibujo, child) {
-                    if (dibujo.points.length > newPoints.length) newPoints.clear();
-                    bool soyMasPequeno = ancho < dibujo.anchoLienzo;
+                Consumer<Sesion>(
+                  builder: (context, sesion, child) {
+                    this.sesion = sesion;
+                    if (sesion.partidaActual.puntos.length > newPoints.length) newPoints.clear();
+                    bool soyMasPequeno = ancho < sesion.anchoLienzo;
                     return ConstrainedBox(
                       constraints: BoxConstraints(
-                        minHeight: soyMasPequeno ? ancho : dibujo.anchoLienzo,
+                        minHeight: soyMasPequeno ? ancho : sesion.anchoLienzo,
                       ),
                       child: Stack(
                         fit: StackFit.loose,
                         children: <Widget>[
                           Transform.scale(
-                            scale: soyMasPequeno ? 1 : ancho / dibujo.anchoLienzo,
+                            scale: soyMasPequeno ? 1 : ancho / sesion.anchoLienzo,
                             alignment: Alignment.topLeft,
                             child: Container(
-                              width: soyMasPequeno ? ancho : dibujo.anchoLienzo,
-                              height: soyMasPequeno ? ancho : dibujo.anchoLienzo,
+                              width: soyMasPequeno ? ancho : sesion.anchoLienzo,
+                              height: soyMasPequeno ? ancho : sesion.anchoLienzo,
                               decoration: BoxDecoration(border: Border.all(color: Colors.black), shape: BoxShape.rectangle),
                               child: GestureDetector(
                                 onPanUpdate: (DragUpdateDetails details) {
@@ -246,20 +271,20 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                   List<Map<String, dynamic>> aux = List();
                                   for (Trazo trazo in newPoints) {
                                     if (trazo == null) {
-                                      aux.add({"x": -dibujo.separadores, "y": -dibujo.separadores, "color": null});
+                                      aux.add({"x": -sesion.separadores, "y": -sesion.separadores, "color": null});
                                     } else {
                                       aux.add({"x": trazo.offset.dx, "y": trazo.offset.dy, "color": trazo.color.toString().substring(6, 16)});
                                     }
                                   }
                                   Firestore.instance.collection('partidas').document('prueba').updateData({
-                                    "points": FieldValue.arrayUnion(aux),
+                                    "puntos": FieldValue.arrayUnion(aux),
                                   });
-                                  dibujo.updateSeperador();
+                                  sesion.updateSeperador();
                                 },
                                 child: Stack(children: [
                                   ClipRect(
                                     child: CustomPaint(
-                                      painter: new Pantalla(trazos: dibujo.points, refresh: false),
+                                      painter: new Pantalla(trazos: sesion.partidaActual.puntos, refresh: false),
                                       size: Size(ancho, ancho),
                                     ),
                                   ),
@@ -283,8 +308,8 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                   FloatingActionButton(
                                     heroTag: 'buttonBorrar',
                                     onPressed: () {
-                                      dibu.separadores = 1;
-                                      Firestore.instance.collection('partidas').document('prueba').updateData({"points": []});
+                                      sesion.separadores = 1;
+                                      Firestore.instance.collection('partidas').document('prueba').updateData({"puntos": []});
                                       setState(() {
                                         newPoints = [];
                                       });
@@ -317,8 +342,25 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                     );
                   },
                 ),
-                Flexible(
-                  child: chat(context),
+                Consumer<Sesion>(
+                  builder: (context, sesion, child) {
+                    List<Mensaje> newChat = sesion.partidaActual.chat.sublist(_mensajes.length);
+                    for (Mensaje mensaje in newChat) {
+                      _mensajes.insert(
+                          0,
+                          Msg(
+                            palabra: sesion.partidaActual.palabra,
+                            mensaje: mensaje,
+                            animationController: new AnimationController(vsync: this, duration: new Duration(milliseconds: 300)),
+                          ));
+                      _mensajes[0].animationController.forward();
+                    }
+                    //_mensajes = newChat;
+                    print('El chat tiene ${_mensajes.length} mensajes');
+                    return Flexible(
+                      child: chat(context),
+                    );
+                  },
                 ),
               ],
             ),
@@ -328,7 +370,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             bottom: tecladoUp ? MediaQuery.of(context).viewInsets.bottom + 10 : 10,
             left: 0,
             right: 0,
-            child: _buildComposer(),
+            child: _buildComposer(sesion.usuario),
           )
         ],
       ),
@@ -337,8 +379,8 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
 
   Widget chat(BuildContext context) {
     return ListView.builder(
-      itemBuilder: (_, int index) => _messages[index],
-      itemCount: _messages.length,
+      itemBuilder: (_, int index) => _mensajes[index],
+      itemCount: _mensajes.length,
       shrinkWrap: true,
       physics: ClampingScrollPhysics(),
       reverse: false,
@@ -373,9 +415,10 @@ class Pantalla extends CustomPainter {
 }
 
 class Msg extends StatelessWidget {
-  Msg({this.txt, this.animationController});
+  Msg({this.palabra, this.mensaje, this.animationController});
 
-  final String txt;
+  final String palabra;
+  final Mensaje mensaje;
   final AnimationController animationController;
 
   @override
@@ -384,26 +427,31 @@ class Msg extends StatelessWidget {
       sizeFactor: new CurvedAnimation(parent: animationController, curve: Curves.easeOut),
       axisAlignment: 0.0,
       child: new Container(
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        color: mensaje.contenido == palabra ? Colors.greenAccent : null,
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
         child: new Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             new Container(
               margin: const EdgeInsets.only(right: 18.0),
-              child: new CircleAvatar(child: new Text('J')),
+              child: CircleAvatar(child: new Text(mensaje.usuario.apodo[0])),
             ),
-            new Expanded(
-              child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new Text('Jorge', style: Theme.of(ctx).textTheme.subhead),
-                  new Container(
-                    margin: const EdgeInsets.only(top: 6.0),
-                    child: new Text(txt),
-                  ),
-                ],
-              ),
-            ),
+            mensaje.contenido != palabra
+                ? new Expanded(
+                    child: new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(mensaje.usuario.apodo, style: Theme.of(ctx).textTheme.subhead),
+                        new Container(
+                          margin: const EdgeInsets.only(top: 6.0),
+                          child: new Text(mensaje.contenido),
+                        ),
+                      ],
+                    ),
+                  )
+                : Text(mensaje.contenido == palabra ? '${mensaje.usuario.apodo} ha acertado!!' : mensaje.usuario.apodo,
+                    style: mensaje.contenido == palabra ? TextStyle(fontSize: 20) : Theme.of(ctx).textTheme.subhead),
           ],
         ),
       ),
