@@ -9,18 +9,18 @@ class NavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<NavigationBar> {
-  var selectedPageIndex = 0;
+  var selectedPageIndex = 1;
   PageController pageController;
 
   var pages = [
+    Tienda(),
     Principal(),
     Social(),
-    Tienda(),
   ];
 
   @override
   void initState() {
-    pageController = PageController();
+    pageController = PageController(initialPage: selectedPageIndex);
     super.initState();
   }
 
@@ -57,21 +57,21 @@ class _NavigationBarState extends State<NavigationBar> {
             BottomNavigationBarItem(
               title: Text(""),
               icon: Icon(
-                Icons.videogame_asset,
+                Icons.shopping_basket,
                 color: selectedPageIndex == 0 ? Colors.black : Colors.white,
               ),
             ),
             BottomNavigationBarItem(
               title: Text(""),
               icon: Icon(
-                Icons.people,
+                Icons.videogame_asset,
                 color: selectedPageIndex == 1 ? Colors.black : Colors.white,
               ),
             ),
             BottomNavigationBarItem(
               title: Text(""),
               icon: Icon(
-                Icons.shopping_basket,
+                Icons.people,
                 color: selectedPageIndex == 2 ? Colors.black : Colors.white,
               ),
             ),

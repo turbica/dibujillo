@@ -155,7 +155,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
 
   void _submitAndClose(String txt) {
     _submitMsg(txt);
-    if(txt.isEmpty) tecladoUp = false;
+    if (txt.isEmpty) tecladoUp = false;
   }
 
   void _submitMsg(String txt) {
@@ -171,7 +171,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       _messages.insert(0, msg);
     });
     msg.animationController.forward();
-    if(txt.isEmpty) tecladoUp = false;
+    if (txt.isEmpty) tecladoUp = false;
   }
 
   @override
@@ -186,16 +186,17 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text("PARTIDA"),
-            FlatButton(
-              child: const Text('Lienzo'),
-              onPressed: () {
-                Firestore.instance
-                    .collection('partidas')
-                    .document('prueba')
-                    .updateData({"anchoLienzo": ancho});
+            GestureDetector(
+              onTap: () {
+                Firestore.instance.collection('partidas').document('prueba').updateData({"anchoLienzo": ancho});
               },
+              child: Text(
+                'Restante: $contador',
+                style: TextStyle(
+                  fontSize: 15,
+                ),
+              ),
             ),
-            Text('Restante: $contador'),
           ],
         ),
         backgroundColor: Color(0xff61ffa6),
@@ -219,7 +220,9 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                     if (dibujo.points.length > newPoints.length) newPoints.clear();
                     bool soyMasPequeno = ancho < dibujo.anchoLienzo;
                     return ConstrainedBox(
-                      constraints: BoxConstraints(minHeight: soyMasPequeno ? ancho : dibujo.anchoLienzo,),
+                      constraints: BoxConstraints(
+                        minHeight: soyMasPequeno ? ancho : dibujo.anchoLienzo,
+                      ),
                       child: Stack(
                         fit: StackFit.loose,
                         children: <Widget>[
@@ -262,7 +265,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                   ),
                                   ClipRect(
                                     child: CustomPaint(
-                                      // Esto aun no se por que no va
+                                        // Esto aun no se por que no va
                                         painter: new Pantalla(trazos: newPoints, refresh: true),
                                         size: Size(ancho, ancho)),
                                   ),
@@ -371,14 +374,14 @@ class Pantalla extends CustomPainter {
 
 class Msg extends StatelessWidget {
   Msg({this.txt, this.animationController});
+
   final String txt;
   final AnimationController animationController;
 
   @override
   Widget build(BuildContext ctx) {
     return new SizeTransition(
-      sizeFactor: new CurvedAnimation(
-          parent: animationController, curve: Curves.easeOut),
+      sizeFactor: new CurvedAnimation(parent: animationController, curve: Curves.easeOut),
       axisAlignment: 0.0,
       child: new Container(
         margin: const EdgeInsets.symmetric(vertical: 8.0),
