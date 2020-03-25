@@ -81,14 +81,14 @@ class _SignupPageState extends State<SignupPage> {
                   padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
                   child: Text(
                     'Registro',
-                    style: TextStyle(fontSize: 80.0, color: Colors.green, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 80.0, color:  Color(0xff61ffa6), fontWeight: FontWeight.bold),
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.fromLTRB(310.0, 115.0, 0.0, 0.0),
                   child: Text(
                     '',
-                    style: TextStyle(fontSize: 80.0, fontWeight: FontWeight.bold, color: Colors.green),
+                    style: TextStyle(fontSize: 80.0, fontWeight: FontWeight.bold, color:  Color(0xff61ffa6)),
                   ),
                 ),
               ],
@@ -109,7 +109,7 @@ class _SignupPageState extends State<SignupPage> {
                         // hintText: 'EMAIL',
                         // hintStyle: ,
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green),
+                          borderSide: BorderSide(color:  Color(0xff61ffa6)),
                         ),
                       ),
                       validator: (value) => value.isEmpty ? 'Debe introducir un eamail' : null,
@@ -122,7 +122,7 @@ class _SignupPageState extends State<SignupPage> {
                       labelText: 'Contraseña',
                       labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.green),
+                        borderSide: BorderSide(color:  Color(0xff61ffa6)),
                       ),
                     ),
                     validator: (value) => value.isEmpty ? 'Debe introducir una constraseña (min 6 caract.)' : null,
@@ -137,7 +137,7 @@ class _SignupPageState extends State<SignupPage> {
                         labelText: 'Apodo',
                         labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.green),
+                          borderSide: BorderSide(color:  Color(0xff61ffa6)),
                         ),
                       ),
                       validator: (value) => value.isEmpty ? 'Debe introducir un apodo' : null,
@@ -165,8 +165,8 @@ class _SignupPageState extends State<SignupPage> {
                       height: 40.0,
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        shadowColor: Colors.green,
-                        color: Colors.green,
+                        shadowColor:  Color(0xff61ffa6),
+                        color:  Color(0xff61ffa6),
                         elevation: 7.0,
                         child: Center(
                           child: Text(
@@ -187,7 +187,7 @@ class _SignupPageState extends State<SignupPage> {
                     color: Colors.transparent,
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.green, style: BorderStyle.solid, width: 1.0),
+                        border: Border.all(color:  Color(0xff61ffa6), style: BorderStyle.solid, width: 1.0),
                         color: Colors.transparent,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
@@ -198,7 +198,7 @@ class _SignupPageState extends State<SignupPage> {
                         child: Center(
                           child: Text(
                             'Volver',
-                            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                            style: TextStyle(color:  Color(0xff61ffa6), fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
                           ),
                         ),
                       ),
