@@ -83,7 +83,7 @@ class _SigninPageState extends State<SigninPage> {
                                     fillColor: Colors.white,
                                     labelText: 'Correo electrónico',
                                     labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
-                                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.green))),
+                                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color:  Color(0xff61ffa6)))),
                                 validator: (value) => value.isEmpty ? 'Debe proporcionar un email' : null,
                                 onSaved: (value) => _email = value,
                                 keyboardType: TextInputType.emailAddress,
@@ -99,7 +99,7 @@ class _SigninPageState extends State<SigninPage> {
                                     color: Colors.grey,
                                   ),
                                   focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.green),
+                                    borderSide: BorderSide(color:  Color(0xff61ffa6)),
                                   ),
                                 ),
                                 obscureText: true,
@@ -114,7 +114,7 @@ class _SigninPageState extends State<SigninPage> {
                                   child: Text(
                                     'Olvidaste la contraseña?',
                                     style: TextStyle(
-                                      color: Colors.green,
+                                      color:  Color(0xff61ffa6),
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Montserrat',
                                       decoration: TextDecoration.underline,
@@ -127,10 +127,10 @@ class _SigninPageState extends State<SigninPage> {
                                 child: Material(
                                   borderRadius: BorderRadius.circular(80.0),
                                   shadowColor: Colors.black,
-                                  color: Colors.green,
+                                  color:  Color(0xff61ffa6),
                                   elevation: 7.0,
                                   child: FloatingActionButton(
-                                    backgroundColor: Colors.green,
+                                    backgroundColor:  Color(0xff61ffa6),
                                     elevation: 0,
                                     onPressed: () async {
                                       int resultado = await validateAndSubmit();
@@ -172,7 +172,7 @@ class _SigninPageState extends State<SigninPage> {
                                     child: Text(
                                       'Registrarse',
                                       style: TextStyle(
-                                          color: Colors.green,
+                                          color:  Color(0xff61ffa6),
                                           fontFamily: 'Montserrat',
                                           fontWeight: FontWeight.bold,
                                           decoration: TextDecoration.underline),
