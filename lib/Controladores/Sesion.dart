@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Sesion extends ChangeNotifier {
-
   // Usuario de Firebase Authentication
   FirebaseUser user;
 
@@ -24,12 +23,59 @@ class Sesion extends ChangeNotifier {
     });
   }
 
-  escucharPartida(String id) {
-    Firestore.instance.collection('partidas').document(id).snapshots().listen((partida) {
-      partidaActual = Partida.decodePartida(partida.data);
-      print('Partida actualizada con ${partidaActual.chat.length} mensajes');
-      notifyListeners();
+  escucharPartida(String id, String codigo) async {
+    bool exito = false;
+    DocumentReference documentReference = Firestore.instance.collection('partidas').document(id);
+    await Firestore.instance.runTransaction((Transaction transaction) async {
+      DocumentSnapshot partida = await transaction.get(documentReference);
+      if (partida.exists) {
+        print('La partida existe');
+        if (partida.data['hay_hueco'] == true) {
+          print('Hay hueco en la partida');
+          await transaction.update(documentReference, <String, dynamic>{
+            "jugadores": FieldValue.arrayUnion([
+              {
+                "usuario": {
+                  "email": usuario.email,
+                  "apodo": usuario.apodo,
+                  "total_puntos": usuario.total_puntos,
+                  "monedas": usuario.monedas,
+                  "colores": usuario.colores,
+                  "iconos": usuario.iconos,
+                  "amigos": usuario.amigos,
+                  "solicitudes": usuario.solicitudes,
+                },
+                "score": 0,
+              }
+            ]),
+            "activos": FieldValue.increment(1),
+            "hay_hueco": partida.data['activos'] + 1 < partida.data['num_jugadores'],
+          });
+          exito = true;
+        }
+        else {
+          await transaction.set(documentReference, <String, dynamic>{"notocar":'notocar'});
+          await transaction.delete(documentReference);
+        }
+      }
+      else {
+        await transaction.set(documentReference, <String, dynamic>{"notocar":'notocar'});
+        await transaction.delete(documentReference);
+      }
     });
+    print('Exito al entrar en partida: $exito');
+    if (exito) {
+      await Firestore.instance.collection('partidas').document(id).get().then((partida) {
+        partidaActual = Partida.decodePartida(partida.data);
+        print('Partida cargada');
+      });
+      Firestore.instance.collection('partidas').document(id).snapshots().listen((partida) {
+        partidaActual = Partida.decodePartida(partida.data);
+        print('Partida actualizada con ${partidaActual.chat.length} mensajes');
+        notifyListeners();
+      });
+    }
+    return exito;
   }
 
   updateSeperador() {

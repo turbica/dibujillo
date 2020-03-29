@@ -52,165 +52,167 @@ class _SigninPageState extends State<SigninPage> {
   Widget build(BuildContext context) {
     sesion = Provider.of<Sesion>(context);
     return new Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(
-          children: <Widget>[
-            Container(
-              height: double.infinity,
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      SafeArea(
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 20.0),
-                          child: Center(
-                            child: Image.asset('images/dibujillo.jpeg'),
-                          ),
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: <Widget>[
+          Container(
+            height: double.infinity,
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 20.0),
+                        child: Center(
+                          child: Image.asset('images/dibujillo.jpeg'),
                         ),
                       ),
-                      Form(
-                        key: formKey,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              TextFormField(
-                                decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    labelText: 'Correo electrónico',
-                                    labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
-                                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color:  Color(0xff61ffa6)))),
-                                validator: (value) => value.isEmpty ? 'Debe proporcionar un email' : null,
-                                onSaved: (value) => _email = value,
-                                keyboardType: TextInputType.emailAddress,
-                              ),
-                              TextFormField(
-                                decoration: InputDecoration(
+                    ),
+                    Form(
+                      key: formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            TextFormField(
+                              decoration: InputDecoration(
                                   filled: true,
                                   fillColor: Colors.white,
-                                  labelText: 'Contraseña',
-                                  labelStyle: TextStyle(
-                                    fontFamily: 'Montserrat',
+                                  labelText: 'Correo electrónico',
+                                  labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
+                                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xff61ffa6)))),
+                              validator: (value) => value.isEmpty ? 'Debe proporcionar un email' : null,
+                              onSaved: (value) => _email = value,
+                              keyboardType: TextInputType.emailAddress,
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                labelText: 'Contraseña',
+                                labelStyle: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Color(0xff61ffa6)),
+                                ),
+                              ),
+                              obscureText: true,
+                              validator: (value) => value.isEmpty ? 'Debe introducir una constraseña' : null,
+                              onSaved: (value) => _password = value,
+                            ),
+                            SizedBox(height: 5.0),
+                            Container(
+                              alignment: Alignment(1.0, 0.0),
+                              padding: EdgeInsets.only(top: 15.0, left: 20.0),
+                              child: InkWell(
+                                child: Text(
+                                  'Olvidaste la contraseña?',
+                                  style: TextStyle(
+                                    color: Color(0xff61ffa6),
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color:  Color(0xff61ffa6)),
+                                    fontFamily: 'Montserrat',
+                                    decoration: TextDecoration.underline,
                                   ),
                                 ),
-                                obscureText: true,
-                                validator: (value) => value.isEmpty ? 'Debe introducir una constraseña' : null,
-                                onSaved: (value) => _password = value,
                               ),
-                              SizedBox(height: 5.0),
-                              Container(
-                                alignment: Alignment(1.0, 0.0),
-                                padding: EdgeInsets.only(top: 15.0, left: 20.0),
-                                child: InkWell(
+                            ),
+                            SizedBox(height: 30.0),
+                            Center(
+                              child: Material(
+                                borderRadius: BorderRadius.circular(80.0),
+                                shadowColor: Colors.black,
+                                color: Color(0xff61ffa6),
+                                elevation: 7.0,
+                                child: FloatingActionButton(
+                                  backgroundColor: Color(0xff61ffa6),
+                                  elevation: 0,
+                                  onPressed: () async {
+                                    int resultado = await validateAndSubmit();
+                                    setState(() {
+                                      cargando = false;
+                                    });
+                                    if (resultado == 0) {
+                                      Navigator.of(context).pushNamed('/principal');
+                                    } else if (resultado == 2) {
+                                      //Error durante el inicio
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return mensajeError(context);
+                                        },
+                                      );
+                                    }
+                                  },
                                   child: Text(
-                                    'Olvidaste la contraseña?',
+                                    'GO',
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 30.0),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  'Nuevo en Dibujillo ?',
+                                  style: TextStyle(fontFamily: 'Montserrat'),
+                                ),
+                                SizedBox(width: 5.0),
+                                InkWell(
+                                  onTap: () {
+                                    //Navigator.pop(context);
+                                    Navigator.of(context).pushNamed('/signup');
+                                  },
+                                  child: Text(
+                                    'Registrarse',
                                     style: TextStyle(
-                                      color:  Color(0xff61ffa6),
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Montserrat',
-                                      decoration: TextDecoration.underline,
-                                    ),
+                                        color: Color(0xff61ffa6),
+                                        fontFamily: 'Montserrat',
+                                        fontWeight: FontWeight.bold,
+                                        decoration: TextDecoration.underline),
                                   ),
-                                ),
-                              ),
-                              SizedBox(height: 30.0),
-                              Center(
-                                child: Material(
-                                  borderRadius: BorderRadius.circular(80.0),
-                                  shadowColor: Colors.black,
-                                  color:  Color(0xff61ffa6),
-                                  elevation: 7.0,
-                                  child: FloatingActionButton(
-                                    backgroundColor:  Color(0xff61ffa6),
-                                    elevation: 0,
-                                    onPressed: () async {
-                                      int resultado = await validateAndSubmit();
-                                      setState(() {
-                                        cargando = false;
-                                      });
-                                      if (resultado == 0) {
-                                        Navigator.of(context).pushNamed('/principal');
-                                      } else if (resultado == 2){ //Error durante el inicio
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return mensajeError(context);
-                                          },
-                                        );
-                                      }
-                                    },
-                                    child: Text(
-                                      'GO',
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 30.0),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    'Nuevo en Dibujillo ?',
-                                    style: TextStyle(fontFamily: 'Montserrat'),
-                                  ),
-                                  SizedBox(width: 5.0),
-                                  InkWell(
-                                    onTap: () {
-                                      //Navigator.pop(context);
-                                      Navigator.of(context).pushNamed('/signup');
-                                    },
-                                    child: Text(
-                                      'Registrarse',
-                                      style: TextStyle(
-                                          color:  Color(0xff61ffa6),
-                                          fontFamily: 'Montserrat',
-                                          fontWeight: FontWeight.bold,
-                                          decoration: TextDecoration.underline),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
+                                )
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: cargando,
+            child: Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                width: 70.0,
+                height: 70.0,
+                child: new Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: new Center(
+                    child: new CircularProgressIndicator(),
                   ),
                 ),
               ),
             ),
-            Visibility(
-              visible: cargando,
-              child: Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  width: 70.0,
-                  height: 70.0,
-                  child: new Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: new Center(
-                      child: new CircularProgressIndicator(),
-                    ),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 
   Widget mensajeError(BuildContext context) {

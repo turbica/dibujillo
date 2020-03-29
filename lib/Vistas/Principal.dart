@@ -17,6 +17,29 @@ class PrincipalState extends State<Principal> {
 
   bool buscandoPartida = false;
 
+  void _showDialog() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: Text("Error al cargar partida"),
+          content: Container(
+            child: Text('No ha sido posible entrar a la partida, por favor intentelo de nuevo mas tarde, mas o menos cuando Jorge lo termine ;)'),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('De acuerdo'),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     sesion = Provider.of<Sesion>(context);
@@ -41,17 +64,7 @@ class PrincipalState extends State<Principal> {
               margin: EdgeInsets.only(top: 200, left: 15, right: 15),
               child: RaisedButton(
                 onPressed: () async {
-                  sesion.escucharPartida('prueba');
-                  setState(() {
-                    buscandoPartida = true;
-                  });
-                  await Future.delayed(Duration(seconds: 1)).then((value) {
-                    buscandoPartida = false;
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Juego()),
-                    );
-                  });
+                  _showDialog();
                 },
                 color: Color(0xff61ffa6),
                 textColor: Colors.black,
