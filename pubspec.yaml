@@ -25,7 +25,7 @@ dependencies:
   firebase_auth: ^0.15.4
   firebase_storage: ^3.1.5
   cloud_firestore: ^0.13.0+1
-
+  gif_ani: ^0.0.2
   provider: ^4.0.2
   shared_preferences: ^0.5.6+1
   connectivity: ^0.4.8+1
