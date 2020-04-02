@@ -2,7 +2,6 @@ import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dibujillo/Vistas/EditarPerfil.dart';
-import 'package:dibujillo/Modelos/Usuario.dart';
 
 class Social extends StatefulWidget {
   @override
@@ -45,10 +44,9 @@ class SocialState extends State<Social> {
               title: Text('Editar perfil'),
               trailing: new Icon(Icons.edit),
               onTap: () {
-                Usuario user = sesion.user;
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EditarPerfil(sesion.user)),
+                  MaterialPageRoute(builder: (context) => EditarPerfil(sesion.usuario)),
                 );
               },
             ),
