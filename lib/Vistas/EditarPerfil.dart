@@ -28,15 +28,9 @@ class Editar_Perfil_state extends State<EditarPerfil> {
   bool local = false;
   String urlFoto;
 
-  void cambiarNickname(String _nickname, Usuario usuario) {
-    Firestore.instance.collection('usuario').document(usuario.email).updateData({
-      "nickname": _nickname,
-    });
-  }
-
-  void cambiarName(String _name, Usuario usuario) {
-    Firestore.instance.collection('usuario').document(usuario.email).updateData({
-      "name": _name,
+  void cambiarApodo(String _nickname, Usuario usuarios) {
+    Firestore.instance.collection('usuarios').document(usuarios.email).updateData({
+      "apodo": _nickname,
     });
   }
 
@@ -56,16 +50,16 @@ class Editar_Perfil_state extends State<EditarPerfil> {
     StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
     String url = await (await uploadTask.onComplete).ref.getDownloadURL();
 
-    Firestore.instance.collection('usuario').document(usuario.email).updateData({
+    Firestore.instance.collection('usuarios').document(usuario.email).updateData({
       "photoUrl": url,
     });
   }
 
   @override
   void initState() {
-    Firestore.instance.collection('usuario').document(widget.usuario.email).get().then((usuario) {
-      usuario["phtoUrl"] == null
-          ? urlFoto = usuario["photoUrl"]
+    Firestore.instance.collection('usuarios').document(widget.usuario.email).get().then((usuarios) {
+      usuarios["phtoUrl"] == null
+          ? urlFoto = usuarios["photoUrl"]
           : urlFoto =
               "https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/855/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=iohCz0oN";
       setState(() {});
@@ -96,110 +90,94 @@ class Editar_Perfil_state extends State<EditarPerfil> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 SizedBox(height: 50),
-                new Row(children: <Widget>[
-                  new Stack(
-                    //alignment:new Alignment(x, y)
+                new Stack(
+                  //alignment:new Alignment(x, y)
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+                      child: CircleAvatar(
+                          radius: 70.0,
+                          child: SizedBox(
+                            width: 180.0,
+                            height: 180.0,
+                            child: local
+                                ? Image.file(_image, fit: BoxFit.fill)
+                                : Image.network(
+                                    urlFoto,
+                                    fit: BoxFit.fill,
+                                  ),
+                          )),
+                    ),
+                    Positioned(
+                      top: 90,
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: FlatButton(
+                          onPressed: () {
+                            cambiarFoto();
+                          },
+                          child: Icon(
+                            Icons.camera_alt,
+                            size: 30.0,
+                          )),
+                    )
+                  ],
+                ),
+                SizedBox(width: 19, height: 40),
+                Container(
+                  padding: EdgeInsets.only(top:0, bottom: 0, left: 40),
+                  child: Row(
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-                        child: CircleAvatar(
-                            radius: 70.0,
-                            child: SizedBox(
-                              width: 180.0,
-                              height: 180.0,
-                              child: local
-                                  ? Image.file(_image, fit: BoxFit.fill)
-                                  : Image.network(
-                                      urlFoto,
-                                      fit: BoxFit.fill,
-                                    ),
-                            )),
+                      new SizedBox(
+                        width: 170.0,
+                        height: 50.0,
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              labelText: 'Apodo',
+                              labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
+                             ),
+                          validator: (value) => value.isEmpty ? 'nickname esta vacio' : null,
+                          onSaved: (value) => _nickname = value,
+                          onChanged: (value) => _nickname = value,
+                        ),
                       ),
-                      Positioned(
-                        top: 90,
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: FlatButton(
-                            onPressed: () {
-                              cambiarFoto();
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: SizedBox(
+                          height: 50,
+                          width: 80,
+                          child: RaisedButton(
+                            color: Color(0xfffed40d),
+                            highlightColor: Color(0xfffed40d),
+                            shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black)),
+                            elevation: 5.0,
+                            onPressed: () async {
+                              if (_nickname == null) {
+                                print("No se cambia el nickname");
+                              } else {
+                                print("Se modifica el nickname");
+                                print(_nickname);
+                                cambiarApodo(_nickname, widget.usuario);
+                              }
+                              if (_image == null) {
+                                print("No se cambia la foto");
+                              } else {
+                                print("Se modifica la foto");
+                                await uploadPic(context, widget.usuario);
+                              }
+                              Navigator.pop(context);
                             },
-                            child: Icon(
-                              Icons.camera_alt,
-                              size: 30.0,
-                            )),
-                      )
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: const Text('OK', style: TextStyle(fontSize: 20)),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
-                  ),
-                  SizedBox(width: 19, height: 40),
-                  new SizedBox(
-                    width: 170.0,
-                    height: 50.0,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          labelText: 'Nickname',
-                          labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
-                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.purpleAccent))),
-                      validator: (value) => value.isEmpty ? 'nickname esta vacio' : null,
-                      onSaved: (value) => _nickname = value,
-                      onChanged: (value) => _nickname = value,
-                    ),
-                  ),
-                  SizedBox(height: 40),
-                  new SizedBox(
-                    width: 170.0,
-                    height: 50.0,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          labelText: 'Alias ',
-                          labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
-                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.purpleAccent))),
-                      validator: (value) => value.isEmpty ? 'name esta vacio' : null,
-                      onSaved: (value) => _name = value,
-                      onChanged: (value) => _name = value,
-                    ),
-                  ),
-                ]),
-                SizedBox(height: 20),
-                SizedBox(
-                  height: 50,
-                  width: 80,
-                  child: RaisedButton(
-                    color: Colors.purpleAccent,
-                    highlightColor: Colors.purpleAccent,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                    elevation: 7.0,
-                    onPressed: () async {
-                      if (_nickname == null) {
-                        print("No se cambia el nickname");
-                      } else {
-                        print("Se modifica el nickname");
-                        print(_nickname);
-                        cambiarNickname(_nickname, widget.usuario);
-                      }
-                      if (_name == null) {
-                        print("No se cambia el name");
-                      } else {
-                        print("Se modifica el name");
-                        print(_name);
-                        cambiarName(_name, widget.usuario);
-                      }
-                      if (_image == null) {
-                        print("No se cambia la foto");
-                      } else {
-                        print("Se modifica la foto");
-                        await uploadPic(context, widget.usuario);
-                      }
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Text('OK', style: TextStyle(fontSize: 20)),
-                    ),
                   ),
                 ),
                 SizedBox(height: 20),
