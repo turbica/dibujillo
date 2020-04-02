@@ -21,6 +21,9 @@ class Sesion extends ChangeNotifier {
       usuario = Usuario.decodeUsuario(doc.data);
       print('Usuario actualizado');
     });
+    FirebaseAuth.instance.currentUser().then((firebaseUser) {
+      user = firebaseUser;
+    });
   }
 
   escucharPartida(String id, String codigo) async {

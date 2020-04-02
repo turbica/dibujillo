@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Controladores/Sesion.dart';
+import 'package:dibujillo/Modelos/Jugador.dart';
 import 'package:dibujillo/Modelos/Mensaje.dart';
+import 'package:dibujillo/Modelos/Palabras.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
 import 'package:dibujillo/Modelos/Usuario.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,6 +36,9 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   bool tecladoUp = false;
   bool palabraAcertada = false;
 
+  int turnoAnterior;
+  List<Jugador> jugadoresAnterior = List();
+
   @override
   void dispose() {
     if (timer != null) {
@@ -50,39 +56,14 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
         });
       } else {
         timer.cancel();
-        _showFinRonda();
       }
     });
   }
 
-  void _showFinRonda() async {
-    // flutter defined function
+  void _showDialogColor() async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: Text("Fin del turno"),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              child: Text('Siguiente ronda'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showDialog() async {
-    // flutter defined function
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
         return AlertDialog(
           title: Text("Elije un color"),
           content: Container(
@@ -102,26 +83,20 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   }
 
   Future<bool> _showExitDialog() async {
-    // flutter defined function
     return showDialog(
       context: context,
       builder: (BuildContext context) {
-        // return object of type Dialog
         return AlertDialog(
           title: Text("¿Abandonar partida?"),
           content: Container(
-            child: Text(
-              'Sia abandonas la partida tu puntuacion alcanzada hasta el momento se restará y se te aplicará una penalización adicional'
-            ),
+            child: Text('Sia abandonas la partida tu puntuacion alcanzada hasta el momento se restará y se te aplicará una penalización adicional'),
           ),
           actions: <Widget>[
             FlatButton(
               onPressed: () {
                 Navigator.pop(context, false);
               },
-              child: Text(
-                  'Volver'
-              ),
+              child: Text('Volver'),
             ),
             FlatButton(
               onPressed: () async {
@@ -138,17 +113,18 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                         "amigos": sesion.usuario.amigos,
                         "solicitudes": sesion.usuario.solicitudes,
                       },
-                      "score": sesion.partidaActual.jugadores.singleWhere((jugador) => jugador.usuario.email == sesion.usuario.email).score,
+                      "score": sesion.partidaActual.jugadores
+                          .singleWhere((jugador) => jugador.usuario.email == sesion.usuario.email)
+                          .score,
                     }
                   ]),
-                  "activos" : FieldValue.increment(-1),
-                  "hay_hueco" : true,
+                  "activos": FieldValue.increment(-1),
+                  "hay_hueco": true,
+                  "turno": sesion.partidaActual.turno == sesion.partidaActual.jugadores.length-1 ? 0 : sesion.partidaActual.turno,
                 });
                 Navigator.pop(context, true);
               },
-              child: Text(
-                  'Abandonar'
-              ),
+              child: Text('Abandonar'),
             ),
           ],
         );
@@ -159,11 +135,16 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   Widget _buildComposer(Usuario usuario) {
     print('palabraAcertada $palabraAcertada');
     return IconTheme(
-      data: IconThemeData(color: Theme.of(context).accentColor),
+      data: IconThemeData(color: Theme
+          .of(context)
+          .accentColor),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10.0),
         decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(20)),
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
         child: Row(
           children: <Widget>[
             Flexible(
@@ -191,11 +172,13 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                     });
                   },
                   onSubmitted: (value) {
-                    if (_isWriting && _textController.text.trim().isNotEmpty) {
+                    if (_isWriting && _textController.text
+                        .trim()
+                        .isNotEmpty) {
                       _submitAndClose(usuario, _textController.text);
                     }
                   },
-                  decoration: InputDecoration.collapsed(hintText: "Enter some text to send a message"),
+                  decoration: InputDecoration.collapsed(hintText: "Introduce una palabra para jugar"),
                 ),
               ),
             ),
@@ -203,7 +186,9 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
               margin: EdgeInsets.symmetric(horizontal: 3.0),
               child: IconButton(
                 icon: Icon(Icons.send),
-                onPressed: _isWriting && _textController.text.trim().isNotEmpty ? () => _submitMsg(usuario, _textController.text) : null,
+                onPressed: _isWriting && _textController.text
+                    .trim()
+                    .isNotEmpty ? () => _submitMsg(usuario, _textController.text) : null,
               ),
             ),
           ],
@@ -245,11 +230,15 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
 
   double ancho;
   List<Mensaje> revisarChat;
+  int pista;
 
   @override
   Widget build(BuildContext context) {
     sesion = Provider.of<Sesion>(context);
-    ancho = MediaQuery.of(context).size.width;
+    ancho = MediaQuery
+        .of(context)
+        .size
+        .width;
     revisarChat = sesion.partidaActual.chat;
     for (Mensaje mensaje in revisarChat) {
       if (mensaje.contenido.trim().toLowerCase() == sesion.partidaActual.palabra.trim().toLowerCase() &&
@@ -258,6 +247,22 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
         //print('${mensaje.contenido.trim().toLowerCase()} - ${sesion.partidaActual.palabra.trim().toLowerCase()} - ${mensaje.usuario.email} - ${sesion.usuario.email}');
         break;
       }
+    }
+    String palabra = "";
+    if (contador == 30) {
+      Random random = Random();
+      pista = random.nextInt(sesion.partidaActual.palabra.length - 1);
+    }
+    for (var letra in sesion.partidaActual.palabra.split('')){
+      if (pista != null && sesion.partidaActual.palabra.split('')[pista] == letra){
+        palabra += letra + ' ';
+      }
+      else {
+        palabra += '_ ';
+      }
+    }
+    if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
+      palabra = sesion.partidaActual.palabra;
     }
     return WillPopScope(
       onWillPop: () async {
@@ -273,7 +278,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text("PARTIDA"),
+              Text(palabra != "" ? '  $palabra' : 'Dibujillo'),
               GestureDetector(
                 onTap: () {
                   Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({"anchoLienzo": ancho});
@@ -325,7 +330,8 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 child: GestureDetector(
                                   onPanUpdate: (DragUpdateDetails details) {
                                     if (sesion.partidaActual.jugadores.isNotEmpty &&
-                                        sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email == sesion.usuario.email) {
+                                        sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email == sesion.usuario.email &&
+                                        sesion.partidaActual.palabra != "" && contador != 0) {
                                       setState(() {
                                         RenderBox renderBox = context.findRenderObject();
                                         Offset _localPosition = renderBox.globalToLocal(details.globalPosition);
@@ -335,7 +341,8 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                   },
                                   onPanEnd: (DragEndDetails details) {
                                     if (sesion.partidaActual.jugadores.isNotEmpty &&
-                                        sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email == sesion.usuario.email) {
+                                        sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email == sesion.usuario.email &&
+                                        sesion.partidaActual.palabra != "" && contador != 0) {
                                       newPoints.add(null);
                                       List<Map<String, dynamic>> aux = List();
                                       for (Trazo trazo in newPoints) {
@@ -361,9 +368,9 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                     ),
                                     ClipRect(
                                       child: CustomPaint(
-                                          // Esto aun no se por que no va
-                                          painter: new Pantalla(trazos: newPoints, refresh: true),
-                                          size: Size(ancho, ancho)),
+                                        painter: new Pantalla(trazos: newPoints, refresh: true),
+                                        size: Size(ancho, ancho),
+                                      ),
                                     ),
                                   ]),
                                 ),
@@ -372,39 +379,47 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                             Positioned(
                               left: 0,
                               top: 0,
-                              child: Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Row(
-                                  children: <Widget>[
-                                    FloatingActionButton(
-                                      heroTag: 'buttonBorrar',
-                                      onPressed: () {
-                                        sesion.separadores = 1;
-                                        Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({"puntos": []});
-                                        setState(() {
-                                          newPoints = [];
-                                        });
-                                      },
-                                      child: Icon(
-                                        Icons.delete,
-                                        color: Colors.white,
+                              child: Visibility(
+                                visible: sesion.partidaActual.jugadores.isNotEmpty &&
+                                    sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email == sesion.usuario.email,
+                                child: Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Row(
+                                    children: <Widget>[
+                                      FloatingActionButton(
+                                        heroTag: 'buttonBorrar',
+                                        onPressed: () {
+                                          if (sesion.partidaActual.palabra != "") {
+                                            sesion.separadores = 1;
+                                            Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({"puntos": []});
+                                            setState(() {
+                                              newPoints = [];
+                                            });
+                                          }
+                                        },
+                                        child: Icon(
+                                          Icons.delete,
+                                          color: Colors.white,
+                                        ),
+                                        backgroundColor: colorTrazo,
+                                        mini: true,
                                       ),
-                                      backgroundColor: colorTrazo,
-                                      mini: true,
-                                    ),
-                                    FloatingActionButton(
-                                      heroTag: 'buttonColor',
-                                      onPressed: () {
-                                        _showDialog();
-                                      },
-                                      child: Icon(
-                                        Icons.color_lens,
-                                        color: Colors.white,
+                                      FloatingActionButton(
+                                        heroTag: 'buttonColor',
+                                        onPressed: () {
+                                          if (sesion.partidaActual.palabra != "") {
+                                            _showDialogColor();
+                                          }
+                                        },
+                                        child: Icon(
+                                          Icons.color_lens,
+                                          color: Colors.white,
+                                        ),
+                                        backgroundColor: colorTrazo,
+                                        mini: true,
                                       ),
-                                      backgroundColor: colorTrazo,
-                                      mini: true,
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             )
@@ -437,15 +452,138 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             ),
             AnimatedPositioned(
               duration: Duration(milliseconds: 10),
-              bottom: tecladoUp ? MediaQuery.of(context).viewInsets.bottom + 10 : 10,
+              bottom: tecladoUp ? MediaQuery
+                  .of(context)
+                  .viewInsets
+                  .bottom + 10 : 10,
               left: 0,
               right: 0,
-              child: _buildComposer(sesion.usuario),
+              child: Visibility(
+                visible: sesion.partidaActual.jugadores.isNotEmpty &&
+                    sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email != sesion.usuario.email,
+                child: _buildComposer(sesion.usuario),
+              ),
+            ),
+            FutureBuilder(
+              future: calcularEstado(),
+              builder: (context, estado) {
+                if (estado.hasData) {
+                  if (estado.data == 'esperarJugadores') {
+                    return AlertDialog(
+                      title: Text("Esperando..."),
+                      content: Text('Esperando mas jugadores'),
+                    );
+                  } else if (estado.data == 'esperarPalabra') {
+                    List<String> palabras = Palabras.getSugerencias();
+                    return AlertDialog(
+                      title: Text("Elige una palabra"),
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(palabras.length, (index) {
+                          return RaisedButton(
+                            onPressed: () async {
+                              await Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
+                                'palabra': palabras[index],
+                              });
+                              print('Palabra actualizada: ${palabras[index]}');
+                            },
+                            child: Text(palabras[index]),
+                          );
+                        }),
+                      ),
+                    );
+                  } else if (estado.data == 'esperarEleccionPalabra') {
+                    return AlertDialog(
+                      title: Text("Esperando..."),
+                      content: Text('${sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.apodo} está eligiendo palabra'),
+                    );
+                  } else if (contador == 0) {
+                    if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
+                      return AlertDialog(
+                        title: Text("Fin del turno"),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () {
+                              DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
+                              Firestore.instance.runTransaction((Transaction transaction) async {
+                                DocumentSnapshot document = await transaction.get(documentReference);
+                                List jugadores = document['jugadores'];
+                                int num_jugadores = jugadores.length;
+                                int turno = document['turno'];
+                                int proximo = (turno + 1) % num_jugadores;
+
+                                await transaction.update(documentReference, <String, dynamic>{
+                                  'turno': proximo,
+                                  'palabra': "",
+                                  'activos': num_jugadores,
+                                  'puntos': [],
+                                  'chat': [],
+                                });
+                                newPoints = [];
+                              });
+                            },
+                            child: Text('Siguiente ronda'),
+                          ),
+                        ],
+                      );
+                    }
+                    else {
+                      return AlertDialog(
+                        title: Text("Fin del turno"),
+                        content: Text('Aqui aparecerán las puntuaciones'),
+                      );
+                    }
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
             )
           ],
         ),
       ),
     );
+  }
+
+  Future<String> calcularEstado() {
+    if (sesion.partidaActual.activos < 2) {
+      return Future.value('esperarJugadores');
+    } else if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
+      if (sesion.partidaActual.palabra == "") {
+        contador = 60;
+        timer = null;
+        _mensajes.clear();
+        colorTrazo = Colors.black;
+        palabraAcertada = false;
+        return Future.value('esperarPalabra');
+      } else {
+        if (timer == null) {
+          iniciarContador();
+          turnoAnterior = sesion.partidaActual.turno;
+          jugadoresAnterior = sesion.partidaActual.jugadores;
+        }
+        return Future.value("");
+      }
+    } else {
+      if (sesion.partidaActual.palabra == "") {
+        contador = 60;
+        timer = null;
+        _mensajes.clear();
+        colorTrazo = Colors.black;
+        palabraAcertada = false;
+        return Future.value('esperarEleccionPalabra');
+      } else {
+        if (timer == null) {
+          iniciarContador();
+          turnoAnterior = sesion.partidaActual.turno;
+          jugadoresAnterior = sesion.partidaActual.jugadores;
+        }
+        return Future.value("");
+      }
+    }
   }
 
   Widget chat(BuildContext context) {
@@ -509,20 +647,26 @@ class Msg extends StatelessWidget {
               child: CircleAvatar(child: Text(mensaje.usuario.apodo[0])),
             ),
             acierto
-                ? Text('${mensaje.usuario.apodo} ha acertado!!', style: acierto ? TextStyle(fontSize: 20) : Theme.of(ctx).textTheme.subhead)
+                ? Text('${mensaje.usuario.apodo} ha acertado!!', style: acierto ? TextStyle(fontSize: 20) : Theme
+                .of(ctx)
+                .textTheme
+                .subhead)
                 : Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(mensaje.usuario.apodo, style: Theme.of(ctx).textTheme.subhead),
-                        Container(
-                          margin: const EdgeInsets.only(top: 6.0),
-                          child: Text(mensaje.contenido),
-                        ),
-                      ],
-                    ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(mensaje.usuario.apodo, style: Theme
+                      .of(ctx)
+                      .textTheme
+                      .subhead),
+                  Container(
+                    margin: const EdgeInsets.only(top: 6.0),
+                    child: Text(mensaje.contenido),
                   ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

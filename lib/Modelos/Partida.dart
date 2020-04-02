@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Modelos/Jugador.dart';
 import 'package:dibujillo/Modelos/Mensaje.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
 import 'package:flutter/material.dart';
 
 class Partida {
-
   String id;
   String clave;
   int num_jugadores;
@@ -18,7 +16,8 @@ class Partida {
   List<Trazo> puntos;
   double ancho;
 
-  Partida(this.id, this.clave, this.num_jugadores, this.activos, this.hay_hueco, this.jugadores, this.turno, this.chat, this.palabra, this.puntos, this.ancho);
+  Partida(this.id, this.clave, this.num_jugadores, this.activos, this.hay_hueco, this.jugadores, this.turno, this.chat, this.palabra, this.puntos,
+      this.ancho);
 
   static Partida decodePartida(Map<String, dynamic> partida) {
     double anchoLienzo = partida["anchoLienzo"] != null ? partida["anchoLienzo"].toDouble() : 10000.0;
@@ -28,8 +27,7 @@ class Partida {
       Trazo newOffset;
       if (b["x"] < 0) {
         puntos.add(null);
-      }
-      else {
+      } else {
         newOffset = Trazo(Offset(b["x"], b["y"]), Color(int.parse(b["color"])));
         puntos.add(newOffset);
       }

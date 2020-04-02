@@ -311,8 +311,8 @@ class PrincipalAmigosState extends State<PrincipalAmigos> {
                                   setState(() {
                                     cargando = true;
                                   });
-                                  if (_nPartida != null && _nPartida != "") {
-                                    bool exito = await sesion.escucharPartida(_nPartida, _codigo);
+                                  if (_nPartida != null && _nPartida.trim() != "") {
+                                    bool exito = await sesion.escucharPartida(_nPartida.trim(), _codigo);
                                     cargando = false;
                                     print('Entrar a partida: $exito');
                                     if (exito) {
