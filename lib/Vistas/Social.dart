@@ -1,9 +1,8 @@
 import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:flutter/material.dart';
-import 'package:dibujillo/Vistas/Juego.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import 'package:dibujillo/Vistas/EditarPerfil.dart';
+import 'package:dibujillo/Modelos/Usuario.dart';
 
 class Social extends StatefulWidget {
   @override
@@ -46,8 +45,11 @@ class SocialState extends State<Social> {
               title: Text('Editar perfil'),
               trailing: new Icon(Icons.edit),
               onTap: () {
-                // Update the state of the app.
-                // ...
+                Usuario user = sesion.user;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditarPerfil(sesion.user)),
+                );
               },
             ),
             ListTile(
