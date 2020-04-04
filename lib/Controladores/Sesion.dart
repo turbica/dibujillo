@@ -41,6 +41,7 @@ class Sesion extends ChangeNotifier {
                 "usuario": {
                   "email": usuario.email,
                   "apodo": usuario.apodo,
+                  "photoUrl": usuario.photoUrl,
                   "total_puntos": usuario.total_puntos,
                   "monedas": usuario.monedas,
                   "colores": usuario.colores,
