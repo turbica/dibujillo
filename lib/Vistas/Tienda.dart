@@ -143,19 +143,17 @@ class TiendaState extends State<Tienda> {
                   )
 
                 ],
-              )
-            //width: 70.0,
-            //height: 27.0,
-          )),
-      // padding: EdgeInsets.only(top: 2.0),
+              ),
+
+          ),),
       borderOnForeground: true,
 
     );
   }
 
   Sesion sesion;
-  List<String> colors = ["Azul", "Verde", "Amarillo"];
-  List<Color> colores = [Color(0xFF1E88E5), Color(0xFF4CAF50), Color(0xFFFFEB3B)];
+  List<String> colors = ["Negro", "Azul", "Verde", "Amarillo"];
+  List<Color> colores = [Color(0xFF000000), Color(0xFF1E88E5), Color(0xFF4CAF50), Color(0xFFFFEB3B)];
 
   Widget buildBody(BuildContext ctxt, int index) {
     return buildColor(

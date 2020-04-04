@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:dibujillo/Modelos/Usuario.dart';
+import 'package:dibujillo/Vistas/EditarPerfil.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:dibujillo/Vistas/EditarPerfil.dart';
 
 class Social extends StatefulWidget {
   @override
@@ -15,12 +16,20 @@ class SocialState extends State<Social> {
 
   int tabSelected = 0;
 
+  TextEditingController textController;
+
   Future<Usuario> obtenerUsuario(String email) async {
     Usuario aux;
     await Firestore.instance.collection('usuarios').document(email).get().then((usuario) {
       aux = Usuario.decodeUsuario(usuario.data);
     });
     return Future.value(aux);
+  }
+
+  @override
+  void initState() {
+    textController = TextEditingController();
+    super.initState();
   }
 
   @override
@@ -58,85 +67,166 @@ class SocialState extends State<Social> {
             }).toList(),
           ),
         ),
-        body: Container(
-          child: tabSelected == 0
-              ? ListView.builder(
-                  itemCount: sesion.usuario.amigos.length,
-                  itemBuilder: (context, index) {
-                    return FutureBuilder<Usuario>(
-                      future: obtenerUsuario(sesion.usuario.amigos[index]),
-                      builder: (context, snapshot) {
-                        print(snapshot.data);
-                        if (snapshot.hasData) {
-                          Usuario amigo = snapshot.data;
-                          return ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(amigo.photoUrl),
-                            ),
-                            title: Text('${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
-                            trailing: Text(
-                              '${amigo.monedas} monedas'
-                            ),
-                          );
-                        }
-                        else {
-                          return SizedBox(
-                            height: 56.0,
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.0,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                    );
-                  },
-                )
-              : ListView.builder(
-                  itemCount: sesion.usuario.solicitudes.length,
-                  itemBuilder: (context, index) {
-                    return FutureBuilder(
-                      future: obtenerUsuario(sesion.usuario.solicitudes[index]),
-                      builder: (context, data) {
-                        if (data.hasData) {
-                          Usuario amigo = data.data;
-                          return ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(amigo.photoUrl),
-                            ),
-                            title: Text('${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
-                            trailing: Row(
-                              children: <Widget>[
-                                RaisedButton(
-                                  onPressed: () {
-
-                                  },
-                                  child: Icon(Icons.check),
+        body: Consumer<Sesion>(
+          builder: (context, sesionActual, child) {
+            this.sesion = sesionActual;
+            return Container(
+              child: tabSelected == 0
+                  ? ListView.builder(
+                      itemCount: sesion.usuario.amigos.length,
+                      itemBuilder: (context, index) {
+                        return FutureBuilder<Usuario>(
+                          future: obtenerUsuario(sesion.usuario.amigos[index]),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              Usuario amigo = snapshot.data;
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(amigo.photoUrl),
                                 ),
-                                RaisedButton(
-                                  onPressed: () {
-
-                                  },
-                                  child: Icon(Icons.cancel),
+                                title: Text('${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
+                                trailing: Text('${amigo.monedas} monedas'),
+                              );
+                            } else {
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(''),
                                 ),
-                              ],
-                            ),
-                          );
-                        }
-                        else {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
+                                title: Text('Cargando...'),
+                              );
+                            }
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
+                    )
+                  : ListView.builder(
+                      itemCount: sesion.usuario.solicitudes.length,
+                      itemBuilder: (context, index) {
+                        return FutureBuilder(
+                          future: obtenerUsuario(sesion.usuario.solicitudes[index]),
+                          builder: (context, data) {
+                            if (data.hasData) {
+                              Usuario amigo = data.data;
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(amigo.photoUrl),
+                                ),
+                                title: Text('${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    GestureDetector(
+                                      onTap: () async {
+                                        await Firestore.instance.runTransaction((Transaction transaction) async {
+                                          await transaction
+                                              .update(Firestore.instance.collection('usuarios').document(sesion.usuario.email), <String, dynamic>{
+                                            "amigos": FieldValue.arrayUnion([amigo.email]),
+                                            "solicitudes": FieldValue.arrayRemove([amigo.email]),
+                                          });
+                                          await transaction.update(Firestore.instance.collection('usuarios').document(amigo.email), <String, dynamic>{
+                                            "amigos": FieldValue.arrayUnion([sesion.usuario.email]),
+                                          });
+                                        });
+                                        setState(() {});
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Icon(Icons.check),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        await Firestore.instance.collection('usuarios').document(sesion.usuario.email).updateData({
+                                          "solicitudes": FieldValue.arrayRemove([amigo.email]),
+                                        });
+                                        setState(() {});
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Icon(Icons.cancel),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(''),
+                                ),
+                                title: Text('Cargando...'),
+                              );
+                            }
+                          },
+                        );
+                      },
+                    ),
+            );
+          },
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () async {
+            String email = await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text('Introduce el email de tu amigo'),
+                  ),
+                  content: TextField(
+                    controller: textController,
+                    decoration: InputDecoration(
+                      labelText: 'Email de tu amigo',
+                      labelStyle: TextStyle(
+                        color: Colors.grey,
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.pop(context, "");
+                      },
+                      child: Text('Cancelar'),
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.pop(context, textController.value.text);
+                      },
+                      child: Text('Enviar solicitud'),
+                    ),
+                  ],
+                );
+              },
+            );
+            Usuario usuario = await Firestore.instance
+                .collection('usuarios')
+                .document(email)
+                .get()
+                .then((usuario) => Usuario.decodeUsuario(usuario.data))
+                .catchError((error) {
+              return null;
+            });
+            if (usuario != null) {
+              await Firestore.instance.collection('usuarios').document(email).updateData({
+                "solicitudes": FieldValue.arrayUnion([sesion.usuario.email]),
+              }).then((value) async {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('Solicitud enviada'),
+                  duration: Duration(seconds: 2),
+                ));
+              });
+            } else {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                duration: Duration(seconds: 2),
+                content: Text('No existe el usuario :('),
+              ));
+            }
+          },
           backgroundColor: Colors.amber,
           shape: RoundedRectangleBorder(
             side: BorderSide(color: Colors.black, width: 4.0),

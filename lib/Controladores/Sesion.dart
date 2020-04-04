@@ -20,6 +20,7 @@ class Sesion extends ChangeNotifier {
     Firestore.instance.collection('usuarios').document(email).snapshots().listen((doc) {
       usuario = Usuario.decodeUsuario(doc.data);
       print('Usuario actualizado');
+      notifyListeners();
     });
     FirebaseAuth.instance.currentUser().then((firebaseUser) {
       user = firebaseUser;
@@ -35,6 +36,7 @@ class Sesion extends ChangeNotifier {
         print('La partida existe');
         if (partida.data['hay_hueco'] == true) {
           print('Hay hueco en la partida');
+          List<String> colores = usuario.colores.map((color) => color.toString().substring(6, 16)).toList();
           await transaction.update(documentReference, <String, dynamic>{
             "jugadores": FieldValue.arrayUnion([
               {
@@ -44,7 +46,7 @@ class Sesion extends ChangeNotifier {
                   "photoUrl": usuario.photoUrl,
                   "total_puntos": usuario.total_puntos,
                   "monedas": usuario.monedas,
-                  "colores": usuario.colores,
+                  "colores": colores,
                   "iconos": usuario.iconos,
                   "amigos": usuario.amigos,
                   "solicitudes": usuario.solicitudes,
@@ -56,14 +58,12 @@ class Sesion extends ChangeNotifier {
             "hay_hueco": partida.data['activos'] + 1 < partida.data['num_jugadores'],
           });
           exito = true;
-        }
-        else {
-          await transaction.set(documentReference, <String, dynamic>{"notocar":'notocar'});
+        } else {
+          await transaction.set(documentReference, <String, dynamic>{"notocar": 'notocar'});
           await transaction.delete(documentReference);
         }
-      }
-      else {
-        await transaction.set(documentReference, <String, dynamic>{"notocar":'notocar'});
+      } else {
+        await transaction.set(documentReference, <String, dynamic>{"notocar": 'notocar'});
         await transaction.delete(documentReference);
       }
     });

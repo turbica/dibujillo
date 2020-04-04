@@ -2,9 +2,6 @@ import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:dibujillo/Vistas/PrincipalAmigos.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dibujillo/Vistas/Juego.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 
 class Principal extends StatefulWidget {
