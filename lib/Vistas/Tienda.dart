@@ -20,9 +20,9 @@ class TiendaState extends State<Tienda> {
 
   updateUserColors(Color color){
     String email = sesion.usuario.email;
-    print(color.toString().substring(35,45));
+    print(color.toString());
     Firestore.instance.collection('usuarios').document(email).updateData({
-      "colores": FieldValue.arrayUnion([color.toString().substring(35,45)]),
+      "colores": FieldValue.arrayUnion([color.toString().substring(6,16).toUpperCase()]),
     });
   }
 
@@ -74,7 +74,7 @@ class TiendaState extends State<Tienda> {
       child: FlatButton(
           onPressed: () async {if(!sesion.usuario.colores.contains(textColor)){function(textColor, text);}},
           child: Container(
-              decoration: BoxDecoration(color:  sesion.usuario.colores.contains(textColor) ? Colors.grey : backgroundcolor),
+              decoration: BoxDecoration(color: sesion.usuario.colores.contains(textColor) ? Colors.grey : backgroundcolor),
               child: Row(
                 children: <Widget>[
                   CircleColor(
@@ -99,7 +99,7 @@ class TiendaState extends State<Tienda> {
 
   Sesion sesion;
   List<String> colors = ["Azul", "Verde", "Amarillo"];
-  List<Color> colores = [Color(0xFF1E88E5), Colors.green, Colors.yellow];
+  List<Color> colores = [Color(0xFF1E88E5), Color(0xFF4CAF50), Color(0xFFFFEB3B)];
 
   Widget buildBody(BuildContext ctxt, int index) {
     return buildColor(
