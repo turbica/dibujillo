@@ -95,17 +95,20 @@ class Editar_Perfil_state extends State<EditarPerfil> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-                      child: CircleAvatar(
-                          radius: 70.0,
-                          child: SizedBox(
-                            width: 180.0,
-                            height: 180.0,
-                            child: local
-                                ? Image.file(_image, fit: BoxFit.fill)
-                                : Image.network(
-                                    urlFoto,
-                                    fit: BoxFit.fill,
-                                  ),
+                      child: Container(
+                          color: Color(0xfffed40d),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: 180.0,
+                              height: 180.0,
+                              child: local
+                                  ? Image.file(_image, fit: BoxFit.fill)
+                                  : Image.network(
+                                      urlFoto,
+                                      fit: BoxFit.fill,
+                                    ),
+                            ),
                           )),
                     ),
                     Positioned(
@@ -135,6 +138,9 @@ class Editar_Perfil_state extends State<EditarPerfil> {
                         child: TextFormField(
                           decoration: InputDecoration(
                               filled: true,
+                              enabledBorder: const OutlineInputBorder(
+                                borderSide: const BorderSide(color: Colors.black)
+                              ),
                               fillColor: Colors.white,
                               labelText: 'Apodo',
                               labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
@@ -145,7 +151,7 @@ class Editar_Perfil_state extends State<EditarPerfil> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
+                        padding: const EdgeInsets.only(left: 20.0),
                         child: SizedBox(
                           height: 50,
                           width: 80,
@@ -189,10 +195,23 @@ class Editar_Perfil_state extends State<EditarPerfil> {
                   ),
                 ),
                 SizedBox(height: 70),
-                FloatingActionButton(
-                  backgroundColor: Colors.purple,
-                  onPressed: () {},
-                  child: Icon(Icons.delete_forever, color: Colors.white, size: 40.0),
+                RaisedButton(
+                  color: Color(0xff65faa6),
+                  highlightElevation: 50,
+                  shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                      'Cancelar',
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        color: Colors.white,
+                      )
+                  ),
                 ),
               ],
             ),
