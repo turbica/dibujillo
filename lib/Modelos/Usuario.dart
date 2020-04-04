@@ -4,6 +4,7 @@ class Usuario {
 
   String email;
   String apodo;
+  String photoUrl;
   int total_puntos;
   int monedas;
   List<Color> colores;
@@ -12,7 +13,7 @@ class Usuario {
   List<String> amigos;
   List<String> solicitudes;
 
-  Usuario(this.email, this.apodo, this.total_puntos, this.monedas, this.colores, this.iconos, this.amigos, this.solicitudes);
+  Usuario(this.email, this.apodo, this.photoUrl, this.total_puntos, this.monedas, this.colores, this.iconos, this.amigos, this.solicitudes);
 
   static Usuario decodeUsuario(Map<String, dynamic> doc) {
     List amigosRaw = doc["amigos"];
@@ -38,6 +39,7 @@ class Usuario {
     return Usuario(
       doc['email'],
       doc['apodo'],
+      doc['photoUrl'],
       doc['total_puntos'].toInt(),
       doc['monedas'],
       colores,

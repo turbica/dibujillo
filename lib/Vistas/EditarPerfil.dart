@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:dibujillo/Modelos/Usuario.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -22,15 +23,14 @@ class EditarPerfil extends StatefulWidget {
 class Editar_Perfil_state extends State<EditarPerfil> {
   final db = Firestore.instance;
   Sesion sesion;
-  String _nickname;
-  String _name;
+  String _apodo;
   File _image;
   bool local = false;
   String urlFoto;
 
-  void cambiarApodo(String _nickname, Usuario usuarios) {
+  void cambiarApodo(String _apodo, Usuario usuarios) {
     Firestore.instance.collection('usuarios').document(usuarios.email).updateData({
-      "apodo": _nickname,
+      "apodo": _apodo,
     });
   }
 
@@ -140,8 +140,8 @@ class Editar_Perfil_state extends State<EditarPerfil> {
                               labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
                              ),
                           validator: (value) => value.isEmpty ? 'nickname esta vacio' : null,
-                          onSaved: (value) => _nickname = value,
-                          onChanged: (value) => _nickname = value,
+                          onSaved: (value) => _apodo = value,
+                          onChanged: (value) => _apodo = value,
                         ),
                       ),
                       Padding(
@@ -155,12 +155,12 @@ class Editar_Perfil_state extends State<EditarPerfil> {
                             shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black)),
                             elevation: 5.0,
                             onPressed: () async {
-                              if (_nickname == null) {
+                              if (_apodo == null) {
                                 print("No se cambia el nickname");
                               } else {
                                 print("Se modifica el nickname");
-                                print(_nickname);
-                                cambiarApodo(_nickname, widget.usuario);
+                                print(_apodo);
+                                cambiarApodo(_apodo, widget.usuario);
                               }
                               if (_image == null) {
                                 print("No se cambia la foto");
