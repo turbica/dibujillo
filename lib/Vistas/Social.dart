@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Controladores/Sesion.dart';
+import 'package:dibujillo/Modelos/Usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dibujillo/Vistas/EditarPerfil.dart';
@@ -11,6 +13,16 @@ class Social extends StatefulWidget {
 class SocialState extends State<Social> {
   Sesion sesion;
 
+  int tabSelected = 0;
+
+  Future<Usuario> obtenerUsuario(String email) async {
+    Usuario aux;
+    await Firestore.instance.collection('usuarios').document(email).get().then((usuario) {
+      print(usuario.data);
+      aux = Usuario.decodeUsuario(usuario.data);
+    });
+    return Future.value(aux);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +43,13 @@ class SocialState extends State<Social> {
           ),
           bottom: TabBar(
             indicator: BoxDecoration(
-              
-              color:Colors.amber,
+              color: Colors.amber,
             ),
+            onTap: (value) {
+              setState(() {
+                tabSelected = value;
+              });
+            },
             indicatorColor: Colors.transparent,
             indicatorWeight: 3.0,
             tabs: choices.map((Choice choice) {
@@ -44,17 +60,93 @@ class SocialState extends State<Social> {
           ),
         ),
         body: Container(
-          child: Center(
-            child: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Colors.amber,
-        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 4.0),borderRadius: new BorderRadius.circular(8.0)),
-        child: Icon(Icons.add),
-          ),
+          child: tabSelected == 0
+              ? ListView.builder(
+                  itemCount: sesion.usuario.amigos.length,
+                  itemBuilder: (context, index) {
+                    return FutureBuilder<Usuario>(
+                      future: obtenerUsuario(sesion.usuario.amigos[index]),
+                      builder: (context, snapshot) {
+                        print(snapshot.data);
+                        if (snapshot.hasData) {
+                          //print(snapshot.data);
+                          Usuario amigo = snapshot.data;
+                          print(amigo.apodo);
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(amigo.photoUrl),
+                            ),
+                            title: Text('${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
+                            trailing: Text(
+                              '${amigo.monedas} monedas'
+                            ),
+                          );
+                        }
+                        else {
+                          return SizedBox(
+                            height: 56.0,
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.0,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  },
+                )
+              : ListView.builder(
+                  itemCount: sesion.usuario.solicitudes.length,
+                  itemBuilder: (context, index) {
+                    return FutureBuilder(
+                      future: obtenerUsuario(sesion.usuario.solicitudes[index]),
+                      builder: (context, data) {
+                        if (data.hasData) {
+                          Usuario amigo = data.data;
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(amigo.photoUrl),
+                            ),
+                            title: Text('${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
+                            trailing: Row(
+                              children: <Widget>[
+                                RaisedButton(
+                                  onPressed: () {
 
-          ),
+                                  },
+                                  child: Icon(Icons.check),
+                                ),
+                                RaisedButton(
+                                  onPressed: () {
+
+                                  },
+                                  child: Icon(Icons.cancel),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        else {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      },
+                    );
+                  },
+                ),
         ),
-
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          backgroundColor: Colors.amber,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.black, width: 4.0),
+            borderRadius: new BorderRadius.circular(8.0),
+          ),
+          child: Icon(Icons.add),
+        ),
         endDrawer: Drawer(
           child: ListView(
             // Important: Remove any padding from the ListView.
@@ -63,10 +155,8 @@ class SocialState extends State<Social> {
               UserAccountsDrawerHeader(
                 accountName: Text(sesion.usuario.apodo),
                 accountEmail: Text(sesion.user.email),
-                currentAccountPicture: new GestureDetector(
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(sesion.usuario.photoUrl),
-                  ),
+                currentAccountPicture: CircleAvatar(
+                  backgroundImage: NetworkImage(sesion.usuario.photoUrl),
                 ),
               ),
               ListTile(
@@ -75,8 +165,7 @@ class SocialState extends State<Social> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => EditarPerfil(sesion.usuario)),
+                    MaterialPageRoute(builder: (context) => EditarPerfil(sesion.usuario)),
                   );
                 },
               ),
@@ -124,7 +213,7 @@ class ChoiceCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(choice.title, style: TextStyle(fontSize: 50) ),
+            Text(choice.title, style: TextStyle(fontSize: 50)),
           ],
         ),
       ),
