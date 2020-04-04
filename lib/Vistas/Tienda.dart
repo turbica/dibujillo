@@ -21,9 +21,11 @@ class TiendaState extends State<Tienda> {
 
   updateUserColors(Color color){
     String email = sesion.usuario.email;
+    int monedas= sesion.usuario.monedas-50;
     print(color.toString());
     Firestore.instance.collection('usuarios').document(email).updateData({
       "colores": FieldValue.arrayUnion([color.toString().substring(6,16).toUpperCase()]),
+      "monedas": monedas,
     });
   }
 
