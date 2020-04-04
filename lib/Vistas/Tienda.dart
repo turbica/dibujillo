@@ -18,6 +18,7 @@ class Tienda extends StatefulWidget {
 class TiendaState extends State<Tienda> {
   bool _colorActual = false;
 
+
   updateUserColors(Color color){
     String email = sesion.usuario.email;
     print(color.toString());
@@ -70,23 +71,34 @@ class TiendaState extends State<Tienda> {
         Color borderColor,
         Function function}) {
     return Card(
-      color: sesion.usuario.colores.contains(textColor) ? Colors.grey : backgroundcolor,
+      color:  backgroundcolor,
       child: FlatButton(
           onPressed: () async {if(!sesion.usuario.colores.contains(textColor)){function(textColor, text);}},
           child: Container(
-              decoration: BoxDecoration(color: sesion.usuario.colores.contains(textColor) ? Colors.grey : backgroundcolor),
+              decoration: BoxDecoration(color:  backgroundcolor),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   CircleColor(
                     color: textColor,
-                    circleSize: 50,
+                    circleSize: 30,
                   ),
-                  SizedBox(width: 15),
                   Text(text,
                       style:
                       TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25)),
-                  SizedBox(width: 20),
-                  Text("2", textAlign: TextAlign.end,style: TextStyle(fontSize: 18),),
+                  //MainAxisAlignment.spaceBetween,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Text(!sesion.usuario.colores.contains(textColor) ? "50" : "", textAlign: TextAlign.end,style: TextStyle(fontSize: 18),),
+                      IconButton(
+                        icon: !sesion.usuario.colores.contains(textColor) ? new Image.asset("images/moneda.png") : Icon(Icons.check, size: 30,),
+
+                      ),
+                    ],
+                  )
+
                 ],
               )
             //width: 70.0,
