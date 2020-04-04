@@ -106,6 +106,7 @@ class TiendaState extends State<Tienda> {
           )),
       // padding: EdgeInsets.only(top: 2.0),
       borderOnForeground: true,
+
     );
   }
 
