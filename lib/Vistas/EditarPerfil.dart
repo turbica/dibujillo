@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:dibujillo/Modelos/Usuario.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -22,15 +23,14 @@ class EditarPerfil extends StatefulWidget {
 class Editar_Perfil_state extends State<EditarPerfil> {
   final db = Firestore.instance;
   Sesion sesion;
-  String _nickname;
-  String _name;
+  String _apodo;
   File _image;
   bool local = false;
   String urlFoto;
 
-  void cambiarApodo(String _nickname, Usuario usuarios) {
+  void cambiarApodo(String _apodo, Usuario usuarios) {
     Firestore.instance.collection('usuarios').document(usuarios.email).updateData({
-      "apodo": _nickname,
+      "apodo": _apodo,
     });
   }
 
@@ -95,17 +95,20 @@ class Editar_Perfil_state extends State<EditarPerfil> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-                      child: CircleAvatar(
-                          radius: 70.0,
-                          child: SizedBox(
-                            width: 180.0,
-                            height: 180.0,
-                            child: local
-                                ? Image.file(_image, fit: BoxFit.fill)
-                                : Image.network(
-                                    urlFoto,
-                                    fit: BoxFit.fill,
-                                  ),
+                      child: Container(
+                          color: Color(0xfffed40d),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              width: 180.0,
+                              height: 180.0,
+                              child: local
+                                  ? Image.file(_image, fit: BoxFit.fill)
+                                  : Image.network(
+                                      urlFoto,
+                                      fit: BoxFit.fill,
+                                    ),
+                            ),
                           )),
                     ),
                     Positioned(
@@ -135,17 +138,20 @@ class Editar_Perfil_state extends State<EditarPerfil> {
                         child: TextFormField(
                           decoration: InputDecoration(
                               filled: true,
+                              enabledBorder: const OutlineInputBorder(
+                                borderSide: const BorderSide(color: Colors.black)
+                              ),
                               fillColor: Colors.white,
                               labelText: 'Apodo',
                               labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
                              ),
                           validator: (value) => value.isEmpty ? 'nickname esta vacio' : null,
-                          onSaved: (value) => _nickname = value,
-                          onChanged: (value) => _nickname = value,
+                          onSaved: (value) => _apodo = value,
+                          onChanged: (value) => _apodo = value,
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
+                        padding: const EdgeInsets.only(left: 20.0),
                         child: SizedBox(
                           height: 50,
                           width: 80,
@@ -155,12 +161,12 @@ class Editar_Perfil_state extends State<EditarPerfil> {
                             shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black)),
                             elevation: 5.0,
                             onPressed: () async {
-                              if (_nickname == null) {
+                              if (_apodo == null) {
                                 print("No se cambia el nickname");
                               } else {
                                 print("Se modifica el nickname");
-                                print(_nickname);
-                                cambiarApodo(_nickname, widget.usuario);
+                                print(_apodo);
+                                cambiarApodo(_apodo, widget.usuario);
                               }
                               if (_image == null) {
                                 print("No se cambia la foto");
@@ -189,10 +195,23 @@ class Editar_Perfil_state extends State<EditarPerfil> {
                   ),
                 ),
                 SizedBox(height: 70),
-                FloatingActionButton(
-                  backgroundColor: Colors.purple,
-                  onPressed: () {},
-                  child: Icon(Icons.delete_forever, color: Colors.white, size: 40.0),
+                RaisedButton(
+                  color: Color(0xff65faa6),
+                  highlightElevation: 50,
+                  shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                      'Cancelar',
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        color: Colors.white,
+                      )
+                  ),
                 ),
               ],
             ),

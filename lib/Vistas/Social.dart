@@ -61,11 +61,11 @@ class SocialState extends State<Social> {
             padding: EdgeInsets.zero,
             children: <Widget>[
               UserAccountsDrawerHeader(
-                accountName: Text(sesion.user.displayName),
+                accountName: Text(sesion.usuario.apodo),
                 accountEmail: Text(sesion.user.email),
                 currentAccountPicture: new GestureDetector(
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(sesion.user.photoUrl),
+                    backgroundImage: NetworkImage(sesion.usuario.photoUrl),
                   ),
                 ),
               ),

@@ -37,16 +37,12 @@ class _SignupPageState extends State<SignupPage> {
       });
       int resultado = 0;
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password).then((value) async {
-        UserUpdateInfo userUpdateInfo = UserUpdateInfo();
-        userUpdateInfo.displayName = _nickname;
-        userUpdateInfo.photoUrl =
-            'https://img.vixdata.io/pd/jpg-large/es/sites/default/files/btg/bodyart.batanga.com/files/7-simpaticos-tatuajes-de-llamas-y-alpacas.jpg';
-        value.user.updateProfile(userUpdateInfo);
         sesion.user = value.user;
         await Firestore.instance.collection('usuarios').document(_email).setData({
           "email": _email,
           "apodo": _nickname,
           "total_puntos": 0,
+          "photoUrl": 'https://img.vixdata.io/pd/jpg-large/es/sites/default/files/btg/bodyart.batanga.com/files/7-simpaticos-tatuajes-de-llamas-y-alpacas.jpg',
           "monedas": 0,
           "colores": [],
           "iconos": [],
