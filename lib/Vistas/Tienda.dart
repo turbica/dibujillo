@@ -46,7 +46,6 @@ class TiendaState extends State<Tienda> {
               child: Text('CANCELAR'),
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop();
               },
             ),
 
@@ -109,10 +108,11 @@ class TiendaState extends State<Tienda> {
       child: FlatButton(
           onPressed: () async {
             if(!sesion.usuario.colores.contains(textColor)){
-              function(textColor, text);
-              if(error){
+              if(sesion.usuario.monedas>=50){
+                function(textColor, text);
+              }
+              else{
                 noMonedasDialog();
-                error=false;
               }
           }},
           child: Container(
