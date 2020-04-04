@@ -106,6 +106,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                       "usuario": {
                         "email": sesion.usuario.email,
                         "apodo": sesion.usuario.apodo,
+                        "photoUrl": sesion.usuario.photoUrl,
                         "total_puntos": sesion.usuario.total_puntos,
                         "monedas": sesion.usuario.monedas,
                         "colores": sesion.usuario.colores,
@@ -212,6 +213,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       "usuario": {
         "amigos": [],
         "apodo": usuario.apodo,
+        "photoUrl": usuario.photoUrl,
         "colores": [],
         "email": usuario.email,
         "iconos": [],
