@@ -18,7 +18,6 @@ class SocialState extends State<Social> {
   Future<Usuario> obtenerUsuario(String email) async {
     Usuario aux;
     await Firestore.instance.collection('usuarios').document(email).get().then((usuario) {
-      print(usuario.data);
       aux = Usuario.decodeUsuario(usuario.data);
     });
     return Future.value(aux);
@@ -69,9 +68,7 @@ class SocialState extends State<Social> {
                       builder: (context, snapshot) {
                         print(snapshot.data);
                         if (snapshot.hasData) {
-                          //print(snapshot.data);
                           Usuario amigo = snapshot.data;
-                          print(amigo.apodo);
                           return ListTile(
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(amigo.photoUrl),
