@@ -17,7 +17,7 @@ class Tienda extends StatefulWidget {
 
 class TiendaState extends State<Tienda> {
   bool _colorActual = false;
-
+  bool error = false;
 
   updateUserColors(Color color){
     String email = sesion.usuario.email;
@@ -25,6 +25,35 @@ class TiendaState extends State<Tienda> {
     Firestore.instance.collection('usuarios').document(email).updateData({
       "colores": FieldValue.arrayUnion([color.toString().substring(6,16).toUpperCase()]),
     });
+  }
+
+  Future<void> noMonedasDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('ERROR'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('No tienes monedas suficientes.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('CANCELAR'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            ),
+
+          ],
+        );
+      },
+    );
   }
 
   Future<void> comprar(Color color, String nombreColor) async {
@@ -52,7 +81,12 @@ class TiendaState extends State<Tienda> {
             FlatButton(
               child: Text('COMPRAR'),
               onPressed: () {
-                updateUserColors(color);
+                if(sesion.usuario.monedas>=50) {
+                  updateUserColors(color);
+                }
+                else {
+                  error=true;
+                }
                 Navigator.of(context).pop();
               },
             ),
@@ -73,7 +107,14 @@ class TiendaState extends State<Tienda> {
     return Card(
       color:  backgroundcolor,
       child: FlatButton(
-          onPressed: () async {if(!sesion.usuario.colores.contains(textColor)){function(textColor, text);}},
+          onPressed: () async {
+            if(!sesion.usuario.colores.contains(textColor)){
+              function(textColor, text);
+              if(error){
+                noMonedasDialog();
+                error=false;
+              }
+          }},
           child: Container(
               decoration: BoxDecoration(color:  backgroundcolor),
               child: Row(
