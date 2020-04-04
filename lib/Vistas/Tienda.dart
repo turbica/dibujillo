@@ -19,12 +19,12 @@ class TiendaState extends State<Tienda> {
   bool _colorActual = false;
   bool error = false;
 
-  updateUserColors(Color color){
+  updateUserColors(Color color) {
     String email = sesion.usuario.email;
-    int monedas= sesion.usuario.monedas-50;
+    int monedas = sesion.usuario.monedas - 50;
     print(color.toString());
     Firestore.instance.collection('usuarios').document(email).updateData({
-      "colores": FieldValue.arrayUnion([color.toString().substring(6,16).toUpperCase()]),
+      "colores": FieldValue.arrayUnion([color.toString().substring(6, 16).toUpperCase()]),
       "monedas": monedas,
     });
   }
@@ -50,7 +50,6 @@ class TiendaState extends State<Tienda> {
                 Navigator.of(context).pop();
               },
             ),
-
           ],
         );
       },
@@ -67,7 +66,6 @@ class TiendaState extends State<Tienda> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-
                 Text('Seguro que quieres comprar el color ' + nombreColor + ' ?'),
               ],
             ),
@@ -82,11 +80,10 @@ class TiendaState extends State<Tienda> {
             FlatButton(
               child: Text('COMPRAR'),
               onPressed: () {
-                if(sesion.usuario.monedas>=50) {
+                if (sesion.usuario.monedas >= 50) {
                   updateUserColors(color);
-                }
-                else {
-                  error=true;
+                } else {
+                  error = true;
                 }
                 Navigator.of(context).pop();
               },
@@ -97,57 +94,55 @@ class TiendaState extends State<Tienda> {
     );
   }
 
-
-
-  Card buildColor(
-      {String text,
-        Color backgroundcolor,
-        Color textColor,
-        Color borderColor,
-        Function function}) {
+  Card buildColor({String text, Color backgroundcolor, Color textColor, Color borderColor, Function function}) {
     return Card(
-      color:  backgroundcolor,
+      color: backgroundcolor,
       child: FlatButton(
-          onPressed: () async {
-            if(!sesion.usuario.colores.contains(textColor)){
-              if(sesion.usuario.monedas>=50){
-                function(textColor, text);
-              }
-              else{
-                noMonedasDialog();
-              }
-          }},
-          child: Container(
-              decoration: BoxDecoration(color:  backgroundcolor),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  CircleColor(
-                    color: textColor,
-                    circleSize: 30,
-                  ),
-                  Text(text,
-                      style:
-                      TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25)),
-                  //MainAxisAlignment.spaceBetween,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text(!sesion.usuario.colores.contains(textColor) ? "50" : "", textAlign: TextAlign.end,style: TextStyle(fontSize: 18),),
-                      IconButton(
-                        icon: !sesion.usuario.colores.contains(textColor) ? new Image.asset("images/moneda.png") : Icon(Icons.check, size: 30,),
-
-                      ),
-                    ],
-                  )
-
-                ],
+        onPressed: () async {
+          if (!sesion.usuario.colores.contains(textColor)) {
+            if (sesion.usuario.monedas >= 50) {
+              function(textColor, text);
+            } else {
+              noMonedasDialog();
+            }
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(color: backgroundcolor),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              CircleColor(
+                color: textColor,
+                circleSize: 30,
               ),
-
-          ),),
+              Text(text, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25)),
+              //MainAxisAlignment.spaceBetween,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Text(
+                    !sesion.usuario.colores.contains(textColor) ? "50" : "",
+                    textAlign: TextAlign.end,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: !sesion.usuario.colores.contains(textColor)
+                        ? new Image.asset("images/moneda.png")
+                        : Icon(
+                            Icons.check,
+                            size: 30,
+                          ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
       borderOnForeground: true,
-
     );
   }
 
@@ -157,11 +152,7 @@ class TiendaState extends State<Tienda> {
 
   Widget buildBody(BuildContext ctxt, int index) {
     return buildColor(
-        text: colors[index],
-        textColor: colores[index],
-        backgroundcolor: Color(0xff61ffa6),
-        borderColor: Colors.blueGrey,
-        function: comprar);
+        text: colors[index], textColor: colores[index], backgroundcolor: Color(0xff61ffa6), borderColor: Colors.blueGrey, function: comprar);
   }
 
   @override
