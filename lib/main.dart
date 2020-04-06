@@ -1,12 +1,12 @@
 import 'package:dibujillo/Controladores/Sesion.dart';
-import 'package:dibujillo/Vistas/SignupPage.dart';
 import 'package:dibujillo/NavigationBar.dart';
+import 'package:dibujillo/Vistas/SigninPage.dart';
+import 'package:dibujillo/Vistas/SignupPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:dibujillo/Vistas/SigninPage.dart';
 
 void main() {
   runApp(

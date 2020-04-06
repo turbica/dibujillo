@@ -12,5 +12,4 @@ class Jugador {
       jugador['score'],
     );
   }
-
 }

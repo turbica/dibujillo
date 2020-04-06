@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class Usuario {
-
   String email;
   String apodo;
   String photoUrl;

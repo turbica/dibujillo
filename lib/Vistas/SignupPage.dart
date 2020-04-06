@@ -1,7 +1,7 @@
-import 'package:dibujillo/Controladores/Sesion.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dibujillo/Controladores/Sesion.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SignupPage extends StatefulWidget {
@@ -42,12 +42,13 @@ class _SignupPageState extends State<SignupPage> {
           "email": _email,
           "apodo": _nickname,
           "total_puntos": 0,
-          "photoUrl": 'https://img.vixdata.io/pd/jpg-large/es/sites/default/files/btg/bodyart.batanga.com/files/7-simpaticos-tatuajes-de-llamas-y-alpacas.jpg',
+          "photoUrl":
+              'https://img.vixdata.io/pd/jpg-large/es/sites/default/files/btg/bodyart.batanga.com/files/7-simpaticos-tatuajes-de-llamas-y-alpacas.jpg',
           "monedas": 0,
-          "colores": [],
+          "colores": ["0xFF000000"],
           "iconos": [],
-          "amigos" : [],
-          "solicitudes" : [],
+          "amigos": [],
+          "solicitudes": [],
         });
         sesion.escucharUsuario(_email);
         print('Registrado');
@@ -77,14 +78,14 @@ class _SignupPageState extends State<SignupPage> {
                   padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
                   child: Text(
                     'Registro',
-                    style: TextStyle(fontSize: 80.0, color:  Color(0xff61ffa6), fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 80.0, color: Color(0xff61ffa6), fontWeight: FontWeight.bold),
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.fromLTRB(310.0, 115.0, 0.0, 0.0),
                   child: Text(
                     '',
-                    style: TextStyle(fontSize: 80.0, fontWeight: FontWeight.bold, color:  Color(0xff61ffa6)),
+                    style: TextStyle(fontSize: 80.0, fontWeight: FontWeight.bold, color: Color(0xff61ffa6)),
                   ),
                 ),
               ],
@@ -105,7 +106,7 @@ class _SignupPageState extends State<SignupPage> {
                         // hintText: 'EMAIL',
                         // hintStyle: ,
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color:  Color(0xff61ffa6)),
+                          borderSide: BorderSide(color: Color(0xff61ffa6)),
                         ),
                       ),
                       validator: (value) => value.isEmpty ? 'Debe introducir un eamail' : null,
@@ -118,7 +119,7 @@ class _SignupPageState extends State<SignupPage> {
                       labelText: 'Contraseña',
                       labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
                       focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color:  Color(0xff61ffa6)),
+                        borderSide: BorderSide(color: Color(0xff61ffa6)),
                       ),
                     ),
                     validator: (value) => value.isEmpty ? 'Debe introducir una constraseña (min 6 caract.)' : null,
@@ -133,7 +134,7 @@ class _SignupPageState extends State<SignupPage> {
                         labelText: 'Apodo',
                         labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color:  Color(0xff61ffa6)),
+                          borderSide: BorderSide(color: Color(0xff61ffa6)),
                         ),
                       ),
                       validator: (value) => value.isEmpty ? 'Debe introducir un apodo' : null,
@@ -161,8 +162,8 @@ class _SignupPageState extends State<SignupPage> {
                       height: 40.0,
                       child: Material(
                         borderRadius: BorderRadius.circular(20.0),
-                        shadowColor:  Color(0xff61ffa6),
-                        color:  Color(0xff61ffa6),
+                        shadowColor: Color(0xff61ffa6),
+                        color: Color(0xff61ffa6),
                         elevation: 7.0,
                         child: Center(
                           child: Text(
@@ -183,7 +184,7 @@ class _SignupPageState extends State<SignupPage> {
                     color: Colors.transparent,
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color:  Color(0xff61ffa6), style: BorderStyle.solid, width: 1.0),
+                        border: Border.all(color: Color(0xff61ffa6), style: BorderStyle.solid, width: 1.0),
                         color: Colors.transparent,
                         borderRadius: BorderRadius.circular(20.0),
                       ),
@@ -194,7 +195,7 @@ class _SignupPageState extends State<SignupPage> {
                         child: Center(
                           child: Text(
                             'Volver',
-                            style: TextStyle(color:  Color(0xff61ffa6), fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
+                            style: TextStyle(color: Color(0xff61ffa6), fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
                           ),
                         ),
                       ),
