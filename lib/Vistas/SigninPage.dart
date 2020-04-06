@@ -66,7 +66,7 @@ class _SigninPageState extends State<SigninPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 20.0),
                         child: Center(
-                          child: Image.asset('images/dibujillo.jpeg'),
+                          child: Image.asset('images/dibujs.gif'),
                         ),
                       ),
                     ),

@@ -4,6 +4,7 @@ import 'package:dibujillo/Modelos/Usuario.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dibujillo/Vistas/EditarPerfil.dart';
+import 'package:speech_bubble/speech_bubble.dart';
 
 class Social extends StatefulWidget {
   @override
@@ -17,7 +18,12 @@ class SocialState extends State<Social> {
 
   Future<Usuario> obtenerUsuario(String email) async {
     Usuario aux;
-    await Firestore.instance.collection('usuarios').document(email).get().then((usuario) {
+    await Firestore.instance
+        .collection('usuarios')
+        .document(email)
+        .get()
+        .then((usuario) {
+      print(usuario.data);
       aux = Usuario.decodeUsuario(usuario.data);
     });
     return Future.value(aux);
@@ -68,18 +74,18 @@ class SocialState extends State<Social> {
                       builder: (context, snapshot) {
                         print(snapshot.data);
                         if (snapshot.hasData) {
+                          //print(snapshot.data);
                           Usuario amigo = snapshot.data;
+                          print(amigo.apodo);
                           return ListTile(
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(amigo.photoUrl),
                             ),
-                            title: Text('${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
-                            trailing: Text(
-                              '${amigo.monedas} monedas'
-                            ),
+                            title: Text(
+                                '${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
+                            trailing: Text('${amigo.monedas} monedas'),
                           );
-                        }
-                        else {
+                        } else {
                           return SizedBox(
                             height: 56.0,
                             child: Align(
@@ -106,26 +112,23 @@ class SocialState extends State<Social> {
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(amigo.photoUrl),
                             ),
-                            title: Text('${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
+                            title: Text(
+                                '${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
                             trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 RaisedButton(
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                   child: Icon(Icons.check),
                                 ),
                                 RaisedButton(
-                                  onPressed: () {
-
-                                  },
+                                  onPressed: () {},
                                   child: Icon(Icons.cancel),
                                 ),
                               ],
                             ),
                           );
-                        }
-                        else {
+                        } else {
                           return Center(
                             child: CircularProgressIndicator(),
                           );
@@ -136,7 +139,30 @@ class SocialState extends State<Social> {
                 ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            SpeechBubble(
+                  nipLocation: NipLocation.BOTTOM,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(
+                        Icons.favorite,
+                        color: Colors.white,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                      ),
+                      Text(
+                        "1",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+          },
           backgroundColor: Colors.amber,
           shape: RoundedRectangleBorder(
             side: BorderSide(color: Colors.black, width: 4.0),
@@ -162,7 +188,8 @@ class SocialState extends State<Social> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => EditarPerfil(sesion.usuario)),
+                    MaterialPageRoute(
+                        builder: (context) => EditarPerfil(sesion.usuario)),
                   );
                 },
               ),
