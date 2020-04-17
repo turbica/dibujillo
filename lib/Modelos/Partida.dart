@@ -11,12 +11,13 @@ class Partida {
   bool hay_hueco;
   List<Jugador> jugadores;
   int turno;
+  int ronda;
   List<Mensaje> chat;
   String palabra;
   List<Trazo> puntos;
   double ancho;
 
-  Partida(this.id, this.clave, this.num_jugadores, this.activos, this.hay_hueco, this.jugadores, this.turno, this.chat, this.palabra, this.puntos,
+  Partida(this.id, this.clave, this.num_jugadores, this.activos, this.hay_hueco, this.jugadores, this.turno, this.ronda, this.chat, this.palabra, this.puntos,
       this.ancho);
 
   static Partida decodePartida(Map<String, dynamic> partida) {
@@ -50,6 +51,7 @@ class Partida {
       partida['hay_hueco'],
       jugadores,
       partida['turno'],
+      partida['ronda'],
       chat,
       partida['palabra'],
       puntos,

@@ -80,11 +80,20 @@ class _SigninPageState extends State<SigninPage> {
                           children: <Widget>[
                             TextFormField(
                               decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  labelText: 'Correo electrónico',
-                                  labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
-                                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xff61ffa6)))),
+                                filled: true,
+                                fillColor: Colors.white,
+                                labelText: 'Correo electrónico',
+                                labelStyle: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0xff61ffa6),
+                                  ),
+                                ),
+                              ),
                               validator: (value) => value.isEmpty ? 'Debe proporcionar un email' : null,
                               onSaved: (value) => _email = value,
                               keyboardType: TextInputType.emailAddress,
@@ -100,7 +109,9 @@ class _SigninPageState extends State<SigninPage> {
                                   color: Colors.grey,
                                 ),
                                 focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xff61ffa6)),
+                                  borderSide: BorderSide(
+                                    color: Color(0xff61ffa6),
+                                  ),
                                 ),
                               ),
                               obscureText: true,

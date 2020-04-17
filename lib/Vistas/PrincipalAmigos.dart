@@ -32,6 +32,7 @@ class PrincipalAmigosState extends State<PrincipalAmigos> {
       "hay_hueco": true,
       "jugadores": [],
       "turno": 0,
+      "ronda": 0,
       "chat": [],
       "palabra": 'dibujillo',
       "puntos": [],
