@@ -32,7 +32,7 @@ class PrincipalAmigosState extends State<PrincipalAmigos> {
       "hay_hueco": true,
       "jugadores": [],
       "turno": 0,
-      "ronda": 0,
+      "ronda": 1,
       "chat": [],
       "palabra": 'dibujillo',
       "puntos": [],
@@ -184,7 +184,7 @@ class PrincipalAmigosState extends State<PrincipalAmigos> {
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: Colors.white,
-                                labelText: 'Codigo',
+                                labelText: 'Contraseña',
                                 labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
                                 focusedBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(
@@ -261,7 +261,7 @@ class PrincipalAmigosState extends State<PrincipalAmigos> {
                                   decoration: InputDecoration(
                                     filled: true,
                                     fillColor: Colors.white,
-                                    labelText: 'Numero de partida',
+                                    labelText: 'Codigo de partida',
                                     labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
                                     // hintText: 'EMAIL',
                                     // hintStyle: ,
@@ -282,7 +282,7 @@ class PrincipalAmigosState extends State<PrincipalAmigos> {
                                   decoration: InputDecoration(
                                     filled: true,
                                     fillColor: Colors.white,
-                                    labelText: 'Codigo',
+                                    labelText: 'Contraseña',
                                     labelStyle: TextStyle(fontFamily: 'Montserrat', fontWeight: FontWeight.bold, color: Colors.grey),
                                     // hintText: 'EMAIL',
                                     // hintStyle: ,

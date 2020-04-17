@@ -16,6 +16,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:provider/provider.dart';
 
+import 'Principal.dart';
+
 class Juego extends StatefulWidget {
   @override
   _JuegoState createState() => _JuegoState();
@@ -48,16 +50,18 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   }
 
   iniciarContador() {
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (contador > 0) {
-        setState(() {
-          print('Segundos restantes: $contador');
-          contador--;
-        });
-      } else {
-        timer.cancel();
-      }
-    });
+    if (contador == 0) {
+      timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        if (contador > 0) {
+          setState(() {
+            print('Segundos restantes: $contador');
+            contador--;
+          });
+        } else {
+          timer.cancel();
+        }
+      });
+    }
   }
 
   Map<int, Color> obtenerMapaDeColor(Color color) {
@@ -467,7 +471,8 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
               right: 0,
               child: Visibility(
                 visible: sesion.partidaActual.jugadores.isNotEmpty &&
-                    sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email != sesion.usuario.email,
+                    sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email != sesion.usuario.email &&
+                    contador > 0,
                 child: _buildComposer(sesion.usuario),
               ),
             ),
@@ -519,9 +524,11 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 int num_jugadores = jugadores.length;
                                 int turno = document['turno'];
                                 int proximo = (turno + 1) % num_jugadores;
+                                int ronda = proximo < turno ? document['ronda'] + 1 : document['ronda'];
 
                                 await transaction.update(documentReference, <String, dynamic>{
                                   'turno': proximo,
+                                  'ronda': ronda,
                                   'palabra': "",
                                   'activos': num_jugadores,
                                   'puntos': [],
@@ -557,37 +564,46 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   Future<String> calcularEstado() {
     if (sesion.partidaActual.activos < 2) {
       return Future.value('esperarJugadores');
-    } else if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
-      if (sesion.partidaActual.palabra == "") {
-        contador = 60;
-        timer = null;
-        _mensajes.clear();
-        colorTrazo = Colors.black;
-        palabraAcertada = false;
-        return Future.value('esperarPalabra');
-      } else {
-        if (timer == null) {
-          iniciarContador();
-          turnoAnterior = sesion.partidaActual.turno;
-          jugadoresAnterior = sesion.partidaActual.jugadores;
-        }
-        return Future.value("");
-      }
     } else {
-      if (sesion.partidaActual.palabra == "") {
-        contador = 60;
-        timer = null;
-        _mensajes.clear();
-        colorTrazo = Colors.black;
-        palabraAcertada = false;
-        return Future.value('esperarEleccionPalabra');
+      if (sesion.partidaActual.ronda == 3 && sesion.partidaActual.turno == sesion.partidaActual.jugadores.length && contador == 0) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Principal()),
+        );
       } else {
-        if (timer == null) {
-          iniciarContador();
-          turnoAnterior = sesion.partidaActual.turno;
-          jugadoresAnterior = sesion.partidaActual.jugadores;
+        if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
+          if (sesion.partidaActual.palabra == "") {
+            contador = 60;
+            timer = null;
+            _mensajes.clear();
+            colorTrazo = Colors.black;
+            palabraAcertada = false;
+            return Future.value('esperarPalabra');
+          } else {
+            if (timer == null) {
+              iniciarContador();
+              turnoAnterior = sesion.partidaActual.turno;
+              jugadoresAnterior = sesion.partidaActual.jugadores;
+            }
+            return Future.value("");
+          }
+        } else {
+          if (sesion.partidaActual.palabra == "") {
+            contador = 60;
+            timer = null;
+            _mensajes.clear();
+            colorTrazo = Colors.black;
+            palabraAcertada = false;
+            return Future.value('esperarEleccionPalabra');
+          } else {
+            if (timer == null) {
+              iniciarContador();
+              turnoAnterior = sesion.partidaActual.turno;
+              jugadoresAnterior = sesion.partidaActual.jugadores;
+            }
+            return Future.value("");
+          }
         }
-        return Future.value("");
       }
     }
   }
