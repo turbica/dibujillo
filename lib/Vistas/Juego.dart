@@ -8,6 +8,7 @@ import 'package:dibujillo/Modelos/Mensaje.dart';
 import 'package:dibujillo/Modelos/Palabras.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
 import 'package:dibujillo/Modelos/Usuario.dart';
+import 'package:dibujillo/Vistas/FinPartida.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,6 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:provider/provider.dart';
-
-import 'Principal.dart';
 
 class Juego extends StatefulWidget {
   @override
@@ -50,18 +49,16 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   }
 
   iniciarContador() {
-    if (contador == 0) {
-      timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        if (contador > 0) {
-          setState(() {
-            print('Segundos restantes: $contador');
-            contador--;
-          });
-        } else {
-          timer.cancel();
-        }
-      });
-    }
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (contador > 0) {
+        setState(() {
+          print('Segundos restantes: $contador');
+          contador--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
   }
 
   Map<int, Color> obtenerMapaDeColor(Color color) {
@@ -514,6 +511,18 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                     if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
                       return AlertDialog(
                         title: Text("Fin del turno"),
+                        content: Column(
+                          children: List.generate(sesion.partidaActual.jugadores.length, (index) {
+                            Jugador jugador = sesion.partidaActual.jugadores[index];
+                            return ListTile(
+                              leading: CircleAvatar(
+                                child: Text(jugador.usuario.apodo[0]),
+                              ),
+                              title: Text(jugador.usuario.apodo),
+                              trailing: Text(jugador.score.toString()),
+                            );
+                          }),
+                        ),
                         actions: <Widget>[
                           FlatButton(
                             onPressed: () {
@@ -544,7 +553,18 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                     } else {
                       return AlertDialog(
                         title: Text("Fin del turno"),
-                        content: Text('Aqui aparecerán las puntuaciones'),
+                        content: Column(
+                          children: List.generate(sesion.partidaActual.jugadores.length, (index) {
+                            Jugador jugador = sesion.partidaActual.jugadores[index];
+                            return ListTile(
+                              leading: CircleAvatar(
+                                child: Text(jugador.usuario.apodo[0]),
+                              ),
+                              title: Text(jugador.usuario.apodo),
+                              trailing: Text(jugador.score.toString()),
+                            );
+                          }),
+                        ),
                       );
                     }
                   } else {
@@ -565,10 +585,13 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     if (sesion.partidaActual.activos < 2) {
       return Future.value('esperarJugadores');
     } else {
-      if (sesion.partidaActual.ronda == 3 && sesion.partidaActual.turno == sesion.partidaActual.jugadores.length && contador == 0) {
+      if (sesion.partidaActual.ronda == 3 &&
+          sesion.partidaActual.turno == sesion.partidaActual.jugadores.length &&
+          contador == 0 &&
+          sesion.partidaActual.palabra != "") {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Principal()),
+          MaterialPageRoute(builder: (context) => FinPartida()),
         );
       } else {
         if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
