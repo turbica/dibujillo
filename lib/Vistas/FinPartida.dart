@@ -10,7 +10,7 @@ class _FinPartidaState extends State<FinPartida> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("PRINCIPAL"),
+        title: Text("FIN PARTIDA"),
         backgroundColor: Color(0xff61ffa6),
         leading: Padding(
           padding: EdgeInsets.only(left: 12),

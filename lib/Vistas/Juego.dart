@@ -588,7 +588,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       return Future.value('esperarJugadores');
     } else {
       if (sesion.partidaActual.ronda == 3 &&
-          sesion.partidaActual.turno == sesion.partidaActual.jugadores.length &&
+          sesion.partidaActual.turno == sesion.partidaActual.jugadores.length - 1 &&
           contador == 0 &&
           sesion.partidaActual.palabra != "") {
         print('Se acabo la partida');
@@ -604,6 +604,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             _mensajes.clear();
             colorTrazo = Colors.black;
             palabraAcertada = false;
+            pista = null;
             return Future.value('esperarPalabra');
           } else {
             if (timer == null) {
@@ -620,6 +621,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             _mensajes.clear();
             colorTrazo = Colors.black;
             palabraAcertada = false;
+            pista = null;
             return Future.value('esperarEleccionPalabra');
           } else {
             if (timer == null) {
