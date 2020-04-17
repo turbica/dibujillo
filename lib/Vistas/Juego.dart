@@ -28,7 +28,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   List<Trazo> newPoints = [];
   Color colorTrazo = Color(0xFF000000);
 
-  int contador = 60;
+  int contador = 0;
   Timer timer;
 
   List<Msg> _mensajes = List();
@@ -512,6 +512,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                       return AlertDialog(
                         title: Text("Fin del turno"),
                         content: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: List.generate(sesion.partidaActual.jugadores.length, (index) {
                             Jugador jugador = sesion.partidaActual.jugadores[index];
                             return ListTile(
@@ -546,7 +547,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 newPoints = [];
                               });
                             },
-                            child: Text('Siguiente ronda'),
+                            child: Text('Siguiente turno'),
                           ),
                         ],
                       );
@@ -554,6 +555,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                       return AlertDialog(
                         title: Text("Fin del turno"),
                         content: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: List.generate(sesion.partidaActual.jugadores.length, (index) {
                             Jugador jugador = sesion.partidaActual.jugadores[index];
                             return ListTile(
@@ -589,6 +591,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           sesion.partidaActual.turno == sesion.partidaActual.jugadores.length &&
           contador == 0 &&
           sesion.partidaActual.palabra != "") {
+        print('Se acabo la partida');
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => FinPartida()),
