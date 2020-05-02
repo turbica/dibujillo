@@ -37,6 +37,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   bool tecladoUp = false;
   bool palabraAcertada = false;
 
+  int nAciertos = 0;
   int turnoAnterior;
   List<Jugador> jugadoresAnterior = List();
 
@@ -451,6 +452,17 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                               animationController: new AnimationController(vsync: this, duration: new Duration(milliseconds: 300)),
                             ));
                         _mensajes[0].animationController.forward();
+                        if (mensaje.contenido.trim().toLowerCase() == palabra.trim().toLowerCase()){
+                          int i = 0;
+                          while(sesion.partidaActual.jugadores[i].usuario.email != mensaje.usuario.email){
+                            i++;
+                          }
+                          if (contador > 50) sesion.partidaActual.jugadores[i].score += 25;
+                          else if (contador > 35) sesion.partidaActual.jugadores[i].score += 15;
+                          else if (contador > 15) sesion.partidaActual.jugadores[i].score += 10;
+                          else sesion.partidaActual.jugadores[i].score += 5;
+                          nAciertos++;
+                        }
                       }
                       print('El chat tiene ${_mensajes.length} mensajes');
                       return Flexible(
@@ -507,7 +519,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                       title: Text("Esperando..."),
                       content: Text('${sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.apodo} está eligiendo palabra'),
                     );
-                  } else if (contador == 0) {
+                  } else if (contador == 0 || nAciertos == sesion.partidaActual.num_jugadores-1) {
                     if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
                       return AlertDialog(
                         title: Text("Fin del turno"),
@@ -535,6 +547,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 int turno = document['turno'];
                                 int proximo = (turno + 1) % num_jugadores;
                                 int ronda = proximo < turno ? document['ronda'] + 1 : document['ronda'];
+                                nAciertos = 0;
 
                                 await transaction.update(documentReference, <String, dynamic>{
                                   'turno': proximo,
@@ -605,6 +618,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             colorTrazo = Colors.black;
             palabraAcertada = false;
             pista = null;
+            nAciertos = 0;
             return Future.value('esperarPalabra');
           } else {
             if (timer == null) {
@@ -683,6 +697,7 @@ class Msg extends StatelessWidget {
   @override
   Widget build(BuildContext ctx) {
     bool acierto = mensaje.contenido.trim().toLowerCase() == palabra.trim().toLowerCase();
+
     return SizeTransition(
       sizeFactor: new CurvedAnimation(parent: animationController, curve: Curves.easeOut),
       axisAlignment: 0.0,
