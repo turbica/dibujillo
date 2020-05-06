@@ -16,9 +16,10 @@ class Partida {
   String palabra;
   List<Trazo> puntos;
   double ancho;
+  int nAciertos;
 
   Partida(this.id, this.clave, this.num_jugadores, this.activos, this.hay_hueco, this.jugadores, this.turno, this.ronda, this.chat, this.palabra, this.puntos,
-      this.ancho);
+      this.ancho, this.nAciertos);
 
   static Partida decodePartida(Map<String, dynamic> partida) {
     double anchoLienzo = partida["anchoLienzo"] != null ? partida["anchoLienzo"].toDouble() : 10000.0;
@@ -56,6 +57,7 @@ class Partida {
       partida['palabra'],
       puntos,
       anchoLienzo,
+      partida['nAciertos'],
     );
   }
 }

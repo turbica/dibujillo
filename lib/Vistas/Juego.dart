@@ -37,7 +37,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   bool tecladoUp = false;
   bool palabraAcertada = false;
 
-  int nAciertos = 0;
   int turnoAnterior;
   List<Jugador> jugadoresAnterior = List();
 
@@ -110,7 +109,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
         return AlertDialog(
           title: Text("¿Abandonar partida?"),
           content: Container(
-            child: Text('Sia abandonas la partida tu puntuacion alcanzada hasta el momento se restará y se te aplicará una penalización adicional'),
+            child: Text('Si abandonas la partida tu puntuacion alcanzada hasta el momento se restará y se te aplicará una penalización adicional '),
           ),
           actions: <Widget>[
             FlatButton(
@@ -145,6 +144,9 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                   "palabra": sesion.partidaActual.activos - 1 == 0 ? "" : sesion.partidaActual.palabra,
                 });
                 Navigator.pop(context, true);
+                if (sesion.partidaActual.activos == 0){
+                  Firestore.instance.collection('partidas').document(sesion.partidaActual.id).delete();
+                }
               },
               child: Text('Abandonar'),
             ),
@@ -245,7 +247,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
   double ancho;
   List<Mensaje> revisarChat;
   int pista;
-
   @override
   Widget build(BuildContext context) {
     sesion = Provider.of<Sesion>(context);
@@ -339,6 +340,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 decoration: BoxDecoration(border: Border.all(color: Colors.black), shape: BoxShape.rectangle),
                                 child: GestureDetector(
                                   onPanUpdate: (DragUpdateDetails details) {
+
                                     if (sesion.partidaActual.jugadores.isNotEmpty &&
                                         sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email == sesion.usuario.email &&
                                         sesion.partidaActual.palabra != "" &&
@@ -371,7 +373,21 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                       sesion.updateSeperador();
                                     }
                                   },
+
                                   child: Stack(children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'CÓDIGO: '+ sesion.partidaActual.id.toString() + ' ',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Color(0xff61ffa6),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )
+                                      ]
+                                    ),
                                     ClipRect(
                                       child: CustomPaint(
                                         painter: new Pantalla(trazos: sesion.partidaActual.puntos, refresh: false),
@@ -454,15 +470,29 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                         _mensajes[0].animationController.forward();
                         if (mensaje.contenido.trim().toLowerCase() == palabra.trim().toLowerCase()){
                           int i = 0;
+                          var jugadoresActualizados = new List(sesion.partidaActual.num_jugadores);
                           while(sesion.partidaActual.jugadores[i].usuario.email != mensaje.usuario.email){
+                            jugadoresActualizados[i] = new Jugador(sesion.partidaActual.jugadores[i].usuario, sesion.partidaActual.jugadores[i].score);
                             i++;
                           }
-                          if (contador > 50) sesion.partidaActual.jugadores[i].score += 25;
-                          else if (contador > 35) sesion.partidaActual.jugadores[i].score += 15;
-                          else if (contador > 15) sesion.partidaActual.jugadores[i].score += 10;
-                          else sesion.partidaActual.jugadores[i].score += 5;
-                          nAciertos++;
-                        }
+                          int puntuacion = sesion.partidaActual.jugadores[i].score;
+                          if (contador > 50) puntuacion += 25;
+                          else if (contador > 35) puntuacion += 15;
+                          else if (contador > 15) puntuacion += 10;
+                          else puntuacion += 5;
+                          jugadoresActualizados[i] = new Jugador(sesion.partidaActual.jugadores[i].usuario, puntuacion);
+                          i++;
+                          while(i<sesion.partidaActual.num_jugadores){
+                            jugadoresActualizados[i] = new Jugador(sesion.partidaActual.jugadores[i].usuario, sesion.partidaActual.jugadores[i].score);
+                          }
+                          Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
+                            'jugadores':  jugadoresActualizados,
+                          });
+                          Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
+                            'nAciertos': sesion.partidaActual.nAciertos + 1,
+                          });
+                          print('Numero de aciertos: '+ sesion.partidaActual.nAciertos.toString());
+                          }
                       }
                       print('El chat tiene ${_mensajes.length} mensajes');
                       return Flexible(
@@ -488,6 +518,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             FutureBuilder(
               future: calcularEstado(),
               builder: (context, estado) {
+                print('Aciertos: '+sesion.partidaActual.nAciertos.toString());
                 if (estado.hasData) {
                   if (estado.data == 'esperarJugadores') {
                     return AlertDialog(
@@ -519,7 +550,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                       title: Text("Esperando..."),
                       content: Text('${sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.apodo} está eligiendo palabra'),
                     );
-                  } else if (contador == 0 || nAciertos == sesion.partidaActual.num_jugadores-1) {
+                  } else if (contador == 0 || sesion.partidaActual.nAciertos == sesion.partidaActual.activos-1) {
                     if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
                       return AlertDialog(
                         title: Text("Fin del turno"),
@@ -547,7 +578,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 int turno = document['turno'];
                                 int proximo = (turno + 1) % num_jugadores;
                                 int ronda = proximo < turno ? document['ronda'] + 1 : document['ronda'];
-                                nAciertos = 0;
 
                                 await transaction.update(documentReference, <String, dynamic>{
                                   'turno': proximo,
@@ -556,6 +586,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                   'activos': num_jugadores,
                                   'puntos': [],
                                   'chat': [],
+                                  'nAciertos': 0,
                                 });
                                 newPoints = [];
                               });
@@ -618,7 +649,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             colorTrazo = Colors.black;
             palabraAcertada = false;
             pista = null;
-            nAciertos = 0;
+
             return Future.value('esperarPalabra');
           } else {
             if (timer == null) {
