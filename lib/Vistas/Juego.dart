@@ -817,8 +817,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       if (sesion.partidaActual.ronda == 3 &&
           sesion.partidaActual.turno ==
               sesion.partidaActual.jugadores.length - 1 &&
-          contador == 0 &&
-          sesion.partidaActual.palabra != "") {
+          contador == 0 ) {
         print('Se acabo la partida');
         Navigator.push(
           context,
