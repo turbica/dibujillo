@@ -34,9 +34,10 @@ class PrincipalAmigosState extends State<PrincipalAmigos> {
       "turno": 0,
       "ronda": 1,
       "chat": [],
-      "palabra": 'dibujillo',
+      "palabra": '',
       "puntos": [],
       "anchoLienzo": 0.0,
+      "nAciertos": 0,
     });
     return Future.value(id);
   }
