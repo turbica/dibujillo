@@ -252,16 +252,17 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     const oneSec = const Duration(seconds: 1);
     _timerSelect = new Timer.periodic(
       oneSec,
-          (Timer timerSelect) => setState(
-            () {
-          if (_start < 1) {
-            timerSelect.cancel();
-            endTime=true;
-          } else {
+          (Timer timerSelect){
             _start = _start - 1;
-          }
-        },
-      ),
+            setState(
+                  () {
+                if (_start < 1) {
+                  timerSelect.cancel();
+                  endTime=true;
+                }
+              },
+            );
+          },
     );
   }
 
