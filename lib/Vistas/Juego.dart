@@ -244,13 +244,13 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     if (contenido.isEmpty) tecladoUp = false;
   }
 
-  Timer _timer;
+  Timer _timerSelect;
   int _start = 10;
   bool endTime = false;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(
+    _timerSelect = new Timer.periodic(
       oneSec,
           (Timer timer) => setState(
             () {
