@@ -35,7 +35,7 @@ class _SigninPageState extends State<SigninPage> {
         cargando = true;
       });
       int resultado = 0;
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password).then((value) {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email.trim(), password: _password).then((value) {
         sesion.user = value.user;
         sesion.escucharUsuario(_email);
       }).catchError((error) {

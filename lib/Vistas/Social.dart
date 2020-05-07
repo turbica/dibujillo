@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:dibujillo/Modelos/Usuario.dart';
 import 'package:dibujillo/Vistas/EditarPerfil.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -260,8 +261,7 @@ class SocialState extends State<Social> {
                 title: Text('Cerrar sesión'),
                 trailing: new Icon(Icons.exit_to_app),
                 onTap: () {
-                  // Update the state of the app.
-                  // ...
+                  FirebaseAuth.instance.signOut();
                 },
               ),
             ],
