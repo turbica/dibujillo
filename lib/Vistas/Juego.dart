@@ -838,7 +838,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             if (_timerSelect == null) startTimer();
             return Future.value('esperarPalabra');
           } else {
-            _timerSelect=null;
+            _timerSelect = null;
             if (timer == null) {
               iniciarContador();
               turnoAnterior = sesion.partidaActual.turno;
@@ -849,6 +849,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
         } else {
           if (sesion.partidaActual.palabra == "") {
             contador = 60;
+            _timerSelect = null;
             timer = null;
             _mensajes.clear();
             colorTrazo = Colors.black;
@@ -856,7 +857,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             pista = null;
             return Future.value('esperarEleccionPalabra');
           } else {
-            _timerSelect=null;
+            _timerSelect = null;
             if (timer == null) {
               iniciarContador();
               turnoAnterior = sesion.partidaActual.turno;
