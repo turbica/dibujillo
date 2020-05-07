@@ -244,6 +244,27 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     if (contenido.isEmpty) tecladoUp = false;
   }
 
+  Timer _timer;
+  int _start = 10;
+  bool endTime = false;
+
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+          (Timer timer) => setState(
+            () {
+          if (_start < 1) {
+            timer.cancel();
+            endTime=true;
+          } else {
+            _start = _start - 1;
+          }
+        },
+      ),
+    );
+  }
+
   double ancho;
   List<Mensaje> revisarChat;
   int pista;
@@ -527,19 +548,26 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                     );
                   } else if (estado.data == 'esperarPalabra') {
                     List<String> palabras = Palabras.getSugerencias();
+                    endTime=false;
+                    startTimer();
                     return AlertDialog(
                       title: Text("Elige una palabra"),
+                      //aqui
                       content: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: List.generate(palabras.length, (index) {
                           return RaisedButton(
                             onPressed: () async {
-                              await Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
-                                'palabra': palabras[index],
-                              });
-                              print('Palabra actualizada: ${palabras[index]}');
-                            },
+                              if(!endTime) {
+                                await Firestore.instance.collection('partidas')
+                                    .document(sesion.partidaActual.id)
+                                    .updateData({
+                                  'palabra': palabras[index],
+                                });
+                                print(
+                                    'Palabra actualizada: ${palabras[index]}');
+                              }},
                             child: Text(palabras[index]),
                           );
                         }),
