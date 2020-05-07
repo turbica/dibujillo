@@ -531,6 +531,8 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                           Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
                             'nAciertos': sesion.partidaActual.nAciertos + 1,
                           });
+                          //if(sesion.partidaActual.nAciertos == sesion.partidaActual.num_jugadores - 1) { contador =0;}
+
                           print('Numero de aciertos: ' + sesion.partidaActual.nAciertos.toString());
                         }
                       }
@@ -630,7 +632,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                   'activos': num_jugadores,
                                   'puntos': [],
                                   'chat': [],
-                                  'nAciertos': 0,
+                                  'nAciertos': sesion.partidaActual.nAciertos,
                                 });
                                 newPoints = [];
                               });
