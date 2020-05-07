@@ -565,7 +565,31 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 });
                                 print(
                                     'Palabra actualizada: ${palabras[index]}');
-                              }},
+                              }
+                              else{
+                                DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
+                                Firestore.instance.runTransaction((Transaction transaction) async {
+                                  DocumentSnapshot document = await transaction.get(documentReference);
+                                  List jugadores = document['jugadores'];
+                                  int num_jugadores = jugadores.length;
+                                  int turno = document['turno'];
+                                  int proximo = (turno + 1) % num_jugadores;
+                                  int ronda = proximo < turno ? document['ronda'] + 1 : document['ronda'];
+
+                                  await transaction.update(documentReference, <String, dynamic>{
+                                    'turno': proximo,
+                                    'ronda': ronda,
+                                    'palabra': "",
+                                    'activos': num_jugadores,
+                                    'puntos': [],
+                                    'chat': [],
+                                    'nAciertos': 0,
+                                  });
+                                  newPoints = [];
+                                });
+                              }
+                            }
+                              ,
                             child: Text(palabras[index]),
                           );
                         }),
