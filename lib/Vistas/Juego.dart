@@ -647,7 +647,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                               .collection('partidas')
                               .document(sesion.partidaActual.id)
                               .updateData({
-                            'nAciertos': sesion.partidaActual.nAciertos + 1,
+                            'nAciertos': FieldValue.increment(1),
                           });
                           //
 
@@ -776,7 +776,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                   'activos': num_jugadores,
                                   'puntos': [],
                                   'chat': [],
-                                  'nAciertos': sesion.partidaActual.nAciertos,
+                                  'nAciertos': 0,
                                 });
                                 newPoints = [];
                               });
