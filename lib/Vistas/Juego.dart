@@ -829,7 +829,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario
                 .email) {
           if (sesion.partidaActual.palabra == "") {
-            contador = 60;
             timer = null;
             _mensajes.clear();
             colorTrazo = Colors.black;
@@ -838,6 +837,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             if (_timerSelect == null) startTimer();
             return Future.value('esperarPalabra');
           } else {
+            contador = 60;
             _timerSelect = null;
             if (timer == null) {
               iniciarContador();
@@ -848,7 +848,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           }
         } else {
           if (sesion.partidaActual.palabra == "") {
-            contador = 60;
             _timerSelect = null;
             timer = null;
             _mensajes.clear();
@@ -857,6 +856,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             pista = null;
             return Future.value('esperarEleccionPalabra');
           } else {
+            contador = 60;
             _timerSelect = null;
             if (timer == null) {
               iniciarContador();
