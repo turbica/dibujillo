@@ -581,6 +581,8 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 'palabra': palabras[index],
                               });
                               print('Palabra actualizada: ${palabras[index]}');
+                              _timerSelect.cancel();
+                              _timerSelect = null;
                             },
                             child: Text(palabras[index]),
                           );
@@ -673,7 +675,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     if (sesion.partidaActual.activos < 2) {
       return Future.value('esperarJugadores');
     } else {
-      if (sesion.partidaActual.ronda == 3 && sesion.partidaActual.turno == sesion.partidaActual.jugadores.length - 1 && contador == 0) {
+      if (sesion.partidaActual.ronda >= 4) {
         print('Se acabo la partida');
         Navigator.push(
           context,
@@ -683,6 +685,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
         if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
           if (sesion.partidaActual.palabra == "") {
             timer = null;
+            contador = 0;
             _mensajes.clear();
             colorTrazo = Colors.black;
             palabraAcertada = false;
@@ -691,6 +694,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             return Future.value('esperarPalabra');
           } else {
             _timerSelect = null;
+            _start = 10;
             if (timer == null) {
               contador = 60;
               iniciarContador();
@@ -703,6 +707,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           if (sesion.partidaActual.palabra == "") {
             _timerSelect = null;
             timer = null;
+            contador = 0;
             _mensajes.clear();
             colorTrazo = Colors.black;
             palabraAcertada = false;
@@ -710,6 +715,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             return Future.value('esperarEleccionPalabra');
           } else {
             _timerSelect = null;
+            _start = 10;
             if (timer == null) {
               contador = 60;
               iniciarContador();
