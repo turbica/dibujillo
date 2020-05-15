@@ -124,18 +124,10 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                 await Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
                   "jugadores": FieldValue.arrayRemove([
                     {
-                      "usuario": {
-                        "email": sesion.usuario.email,
-                        "apodo": sesion.usuario.apodo,
-                        "photoUrl": sesion.usuario.photoUrl,
-                        "total_puntos": sesion.usuario.total_puntos,
-                        "monedas": sesion.usuario.monedas,
-                        "colores": colores,
-                        "iconos": sesion.usuario.iconos,
-                        "amigos": sesion.usuario.amigos,
-                        "solicitudes": sesion.usuario.solicitudes,
-                      },
-                      "score": sesion.partidaActual.jugadores.singleWhere((jugador) => jugador.usuario.email == sesion.usuario.email).score,
+                      "email": sesion.usuario.email,
+                      "apodo": sesion.usuario.apodo,
+                      "photoUrl": sesion.usuario.photoUrl,
+                      "score": sesion.partidaActual.jugadores.singleWhere((jugador) => jugador.email == sesion.usuario.email).score,
                     }
                   ]),
                   "activos": FieldValue.increment(-1),
@@ -310,7 +302,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
         palabra += '_ ';
       }
     }
-    if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
+    if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].email) {
       palabra = sesion.partidaActual.palabra;
     }
     if (sesion.partidaActual.nAciertos == sesion.partidaActual.num_jugadores - 1) {
@@ -382,7 +374,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 child: GestureDetector(
                                   onPanUpdate: (DragUpdateDetails details) {
                                     if (sesion.partidaActual.jugadores.isNotEmpty &&
-                                        sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email == sesion.usuario.email &&
+                                        sesion.partidaActual.jugadores[sesion.partidaActual.turno].email == sesion.usuario.email &&
                                         sesion.partidaActual.palabra != "" &&
                                         contador != 0) {
                                       setState(() {
@@ -394,7 +386,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                   },
                                   onPanEnd: (DragEndDetails details) {
                                     if (sesion.partidaActual.jugadores.isNotEmpty &&
-                                        sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email == sesion.usuario.email &&
+                                        sesion.partidaActual.jugadores[sesion.partidaActual.turno].email == sesion.usuario.email &&
                                         sesion.partidaActual.palabra != "" &&
                                         contador != 0) {
                                       newPoints.add(null);
@@ -445,7 +437,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                               top: 0,
                               child: Visibility(
                                 visible: sesion.partidaActual.jugadores.isNotEmpty &&
-                                    sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email == sesion.usuario.email,
+                                    sesion.partidaActual.jugadores[sesion.partidaActual.turno].email == sesion.usuario.email,
                                 child: Padding(
                                   padding: EdgeInsets.all(10),
                                   child: Row(
@@ -507,9 +499,9 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                         if (mensaje.contenido.trim().toLowerCase() == palabra.trim().toLowerCase()) {
                           int i = 0;
                           var jugadoresActualizados = new List(sesion.partidaActual.num_jugadores);
-                          while (sesion.partidaActual.jugadores[i].usuario.email != mensaje.usuario.email) {
+                          while (sesion.partidaActual.jugadores[i].email != mensaje.usuario.email) {
                             jugadoresActualizados[i] =
-                                new Jugador(sesion.partidaActual.jugadores[i].usuario, sesion.partidaActual.jugadores[i].score);
+                                new Jugador(sesion.partidaActual.jugadores[i].apodo, sesion.partidaActual.jugadores[i].email, sesion.partidaActual.jugadores[i].photoUrl, sesion.partidaActual.jugadores[i].score);
                             i++;
                           }
                           int puntuacion = sesion.partidaActual.jugadores[i].score;
@@ -521,11 +513,11 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                             puntuacion += 10;
                           else
                             puntuacion += 5;
-                          jugadoresActualizados[i] = new Jugador(sesion.partidaActual.jugadores[i].usuario, puntuacion);
+                          jugadoresActualizados[i] = new Jugador(sesion.partidaActual.jugadores[i].apodo, sesion.partidaActual.jugadores[i].email, sesion.partidaActual.jugadores[i].photoUrl, puntuacion);
                           i = 0;
                           while (i < sesion.partidaActual.num_jugadores) {
                             jugadoresActualizados[i] =
-                                new Jugador(sesion.partidaActual.jugadores[i].usuario, sesion.partidaActual.jugadores[i].score);
+                                new Jugador(sesion.partidaActual.jugadores[i].apodo, sesion.partidaActual.jugadores[i].email, sesion.partidaActual.jugadores[i].photoUrl, sesion.partidaActual.jugadores[i].score);
                             i++;
                           }
                           Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
@@ -555,7 +547,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
               right: 0,
               child: Visibility(
                 visible: sesion.partidaActual.jugadores.isNotEmpty &&
-                    sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email != sesion.usuario.email &&
+                    sesion.partidaActual.jugadores[sesion.partidaActual.turno].email != sesion.usuario.email &&
                     contador > 0,
                 child: _buildComposer(sesion.usuario),
               ),
@@ -597,10 +589,10 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                   } else if (estado.data == 'esperarEleccionPalabra') {
                     return AlertDialog(
                       title: Text("Esperando..."),
-                      content: Text('${sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.apodo} está eligiendo palabra'),
+                      content: Text('${sesion.partidaActual.jugadores[sesion.partidaActual.turno].apodo} está eligiendo palabra'),
                     );
                   } else if (contador == 0 || sesion.partidaActual.nAciertos == sesion.partidaActual.activos - 1) {
-                    if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
+                    if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].email) {
                       return AlertDialog(
                         title: Text("Fin del turno"),
                         content: Column(
@@ -609,9 +601,9 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                             Jugador jugador = sesion.partidaActual.jugadores[index];
                             return ListTile(
                               leading: CircleAvatar(
-                                child: Text(jugador.usuario.apodo[0]),
+                                child: Text(jugador.apodo[0]),
                               ),
-                              title: Text(jugador.usuario.apodo),
+                              title: Text(jugador.apodo),
                               trailing: Text(jugador.score.toString()),
                             );
                           }),
@@ -653,9 +645,9 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                             Jugador jugador = sesion.partidaActual.jugadores[index];
                             return ListTile(
                               leading: CircleAvatar(
-                                child: Text(jugador.usuario.apodo[0]),
+                                child: Text(jugador.apodo[0]),
                               ),
-                              title: Text(jugador.usuario.apodo),
+                              title: Text(jugador.apodo),
                               trailing: Text(jugador.score.toString()),
                             );
                           }),
@@ -687,7 +679,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           MaterialPageRoute(builder: (context) => FinPartida()),
         );
       } else {
-        if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].usuario.email) {
+        if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].email) {
           if (sesion.partidaActual.palabra == "") {
             timer = null;
             contador = 0;

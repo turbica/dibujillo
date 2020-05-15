@@ -40,17 +40,9 @@ class Sesion extends ChangeNotifier {
           await transaction.update(documentReference, <String, dynamic>{
             "jugadores": FieldValue.arrayUnion([
               {
-                "usuario": {
-                  "email": usuario.email,
-                  "apodo": usuario.apodo,
-                  "photoUrl": usuario.photoUrl,
-                  "total_puntos": usuario.total_puntos,
-                  "monedas": usuario.monedas,
-                  "colores": colores,
-                  "iconos": usuario.iconos,
-                  "amigos": usuario.amigos,
-                  "solicitudes": usuario.solicitudes,
-                },
+                "email": usuario.email,
+                "apodo": usuario.apodo,
+                "photoUrl": usuario.photoUrl,
                 "score": 0,
               }
             ]),

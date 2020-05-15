@@ -1,14 +1,18 @@
 import 'package:dibujillo/Modelos/Usuario.dart';
 
 class Jugador {
-  Usuario usuario;
+  String apodo;
+  String email;
+  String photoUrl;
   int score;
 
-  Jugador(this.usuario, this.score);
+  Jugador(this.apodo, this.email, this.photoUrl, this.score);
 
   static Jugador decodeJugador(Map<String, dynamic> jugador) {
     return Jugador(
-      Usuario.decodeUsuario(jugador['usuario']),
+      jugador['apodo'],
+      jugador['email'],
+      jugador['photoUrl'],
       jugador['score'],
     );
   }
