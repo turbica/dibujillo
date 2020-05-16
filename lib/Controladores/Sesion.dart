@@ -44,6 +44,7 @@ class Sesion extends ChangeNotifier {
                 "apodo": usuario.apodo,
                 "photoUrl": usuario.photoUrl,
                 "score": 0,
+                "pause": false,
               }
             ]),
             "activos": FieldValue.increment(1),

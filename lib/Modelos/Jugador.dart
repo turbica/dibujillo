@@ -5,8 +5,9 @@ class Jugador {
   String email;
   String photoUrl;
   int score;
+  bool pause;
 
-  Jugador(this.apodo, this.email, this.photoUrl, this.score);
+  Jugador(this.apodo, this.email, this.photoUrl, this.score, this.pause);
 
   static Jugador decodeJugador(Map<String, dynamic> jugador) {
     return Jugador(
@@ -14,6 +15,7 @@ class Jugador {
       jugador['email'],
       jugador['photoUrl'],
       jugador['score'],
+      jugador['pause']
     );
   }
 }
