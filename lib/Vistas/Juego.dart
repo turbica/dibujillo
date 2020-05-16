@@ -138,6 +138,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                           .singleWhere((jugador) =>
                               jugador.email == sesion.usuario.email)
                           .score,
+                      "pause": sesion.partidaActual.jugadores[getIndex()].pause,
                     }
                   ]),
                   "activos": FieldValue.increment(-1),
@@ -226,7 +227,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     );
   }
 
-  int getIndex(){
+  int getIndex() {
     int i = 0;
     for (Jugador jugador in sesion.partidaActual.jugadores) {
       if (jugador.email == sesion.usuario.email) {
@@ -378,31 +379,23 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                 child: Column(
                   children: <Widget>[
                     Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         IconButton(
-                          icon: sesion
-                              .partidaActual
-                              .jugadores[getIndex()]
-                              .pause ==
-                              false
+                          icon: sesion.partidaActual.jugadores[getIndex()]
+                                      .pause ==
+                                  false
                               ? Icon(Icons.pause)
                               : Icon(Icons.play_arrow),
                           onPressed: () {
-                            myindex=getIndex();
-                            if (sesion.partidaActual
-                                .jugadores[myindex].pause ==
+                            myindex = getIndex();
+                            if (sesion.partidaActual.jugadores[myindex].pause ==
                                 false) {
-                              sesion
-                                  .partidaActual
-                                  .jugadores[myindex]
-                                  .pause = true;
+                              sesion.partidaActual.jugadores[myindex].pause =
+                                  true;
                             } else
-                              sesion
-                                  .partidaActual
-                                  .jugadores[myindex]
-                                  .pause = false;
+                              sesion.partidaActual.jugadores[myindex].pause =
+                                  false;
                           },
                         )
                       ],
@@ -524,7 +517,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                     }
                                   },
                                   child: Stack(children: [
-
                                     Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
