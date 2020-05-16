@@ -375,11 +375,45 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                       .document(sesion.partidaActual.id)
                       .updateData({"anchoLienzo": ancho});
                 },
-                child: Text(
-                  'Restante: $contador',
-                  style: TextStyle(
-                    fontSize: 15,
-                  ),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.start,
+                      children: <Widget>[
+                        IconButton(
+                          icon: sesion
+                              .partidaActual
+                              .jugadores[getIndex()]
+                              .pause ==
+                              false
+                              ? Icon(Icons.pause)
+                              : Icon(Icons.play_arrow),
+                          onPressed: () {
+                            myindex=getIndex();
+                            if (sesion.partidaActual
+                                .jugadores[myindex].pause ==
+                                false) {
+                              sesion
+                                  .partidaActual
+                                  .jugadores[myindex]
+                                  .pause = true;
+                            } else
+                              sesion
+                                  .partidaActual
+                                  .jugadores[myindex]
+                                  .pause = false;
+                          },
+                        )
+                      ],
+                    ),
+                    Text(
+                      'Restante: $contador',
+                      style: TextStyle(
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -490,36 +524,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                     }
                                   },
                                   child: Stack(children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: <Widget>[
-                                        IconButton(
-                                          icon: sesion
-                                                      .partidaActual
-                                                      .jugadores[getIndex()]
-                                                      .pause ==
-                                                  false
-                                              ? Icon(Icons.pause)
-                                              : Icon(Icons.play_arrow),
-                                          onPressed: () {
-                                            myindex=getIndex();
-                                            if (sesion.partidaActual
-                                                    .jugadores[myindex].pause ==
-                                                false) {
-                                              sesion
-                                                  .partidaActual
-                                                  .jugadores[myindex]
-                                                  .pause = true;
-                                            } else
-                                              sesion
-                                                  .partidaActual
-                                                  .jugadores[myindex]
-                                                  .pause = false;
-                                          },
-                                        )
-                                      ],
-                                    ),
+
                                     Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
