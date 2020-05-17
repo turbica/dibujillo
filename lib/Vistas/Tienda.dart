@@ -160,7 +160,17 @@ class TiendaState extends State<Tienda> {
     sesion = Provider.of<Sesion>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("TIENDA"),
+        title: Text(
+          "TIENDA",
+          style:
+          TextStyle(fontStyle:  FontStyle.normal,color: Colors.black, fontSize: 26, shadows: <Shadow>[
+            Shadow(
+              offset: Offset(1.0, 0.0),
+              blurRadius: 2.0,
+              color: Colors.green,
+            )
+          ]),
+        ),
         backgroundColor: Color(0xff61ffa6),
         leading: Padding(
           padding: EdgeInsets.only(left: 12),
