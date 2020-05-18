@@ -259,14 +259,30 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
         if (_start < 1) {
           timerSelect.cancel();
           _start = 10;
+
           DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
           Firestore.instance.runTransaction((Transaction transaction) async {
             DocumentSnapshot document = await transaction.get(documentReference);
             List jugadores = document['jugadores'];
             int num_jugadores = jugadores.length;
             int turno = document['turno'];
-            int proximo = (turno + 1) % num_jugadores;
-            int ronda = proximo < turno ? document['ronda'] + 1 : document['ronda'];
+            int ronda = document['ronda'];
+            int anterior = turno;
+            int sigTurno = turno;
+
+            for (Jugador gamer in sesion.partidaActual.jugadores) {
+              if (sesion.partidaActual.jugadores[sigTurno].pause) {
+                sigTurno = (sigTurno + 1) % num_jugadores;
+                if (sigTurno < anterior) {
+                  ronda++;
+                }
+              } else {
+                break;
+              }
+            }
+            int proximo = sigTurno;
+
+            // int ronda = proximo > turno ? document['ronda'] : document['ronda'] + 1;
 
             await transaction.update(documentReference, <String, dynamic>{
               'turno': proximo,
