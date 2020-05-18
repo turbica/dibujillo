@@ -336,64 +336,56 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(palabra != "" ? '  $palabra' : 'Dibujillo'),
-              GestureDetector(
-                onTap: () {
-                  Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({"anchoLienzo": ancho});
-                },
-                child: Column(
-                  children: <Widget>[
-                    Consumer<Sesion>(
-                    builder: (context, sesion, child) {
-                      return sesion.partidaActual.turno == getIndex()
-                          ? Container()
-                          : IconButton(
-                        icon: sesion.partidaActual.jugadores[getIndex()].pause == false ? Icon(Icons.pause) : Icon(Icons.play_arrow),
-                        onPressed: () {
+              Column(
+                children: <Widget>[
+                  sesion.partidaActual.turno == getIndex()
+                      ? Container()
+                      : IconButton(
+                          icon: sesion.partidaActual.jugadores[getIndex()].pause == false ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+                          onPressed: () {
+                            // Actualizar base de datos
 
-                          // Actualizar base de datos
-
-                          int i = 0;
-                          bool pau = sesion.partidaActual.jugadores[getIndex()].pause;
-                          var jugadoresActualizados = new List(sesion.partidaActual.num_jugadores);
-                          while (i < sesion.partidaActual.num_jugadores) {
-                            if (i == getIndex()) {
-                              jugadoresActualizados[i] = new Jugador(
-                                  sesion.partidaActual.jugadores[i].apodo,
-                                  sesion.partidaActual.jugadores[i].email,
-                                  sesion.partidaActual.jugadores[i].photoUrl,
-                                  sesion.partidaActual.jugadores[i].score,
-                                  !pau);
-                            } else {
-                              jugadoresActualizados[i] = new Jugador(
-                                  sesion.partidaActual.jugadores[i].apodo,
-                                  sesion.partidaActual.jugadores[i].email,
-                                  sesion.partidaActual.jugadores[i].photoUrl,
-                                  sesion.partidaActual.jugadores[i].score,
-                                  sesion.partidaActual.jugadores[i].pause);
+                            int i = 0;
+                            bool pau = sesion.partidaActual.jugadores[getIndex()].pause;
+                            var jugadoresActualizados = new List(sesion.partidaActual.num_jugadores);
+                            while (i < sesion.partidaActual.num_jugadores) {
+                              if (i == getIndex()) {
+                                jugadoresActualizados[i] = new Jugador(
+                                    sesion.partidaActual.jugadores[i].apodo,
+                                    sesion.partidaActual.jugadores[i].email,
+                                    sesion.partidaActual.jugadores[i].photoUrl,
+                                    sesion.partidaActual.jugadores[i].score,
+                                    !pau);
+                              } else {
+                                jugadoresActualizados[i] = new Jugador(
+                                    sesion.partidaActual.jugadores[i].apodo,
+                                    sesion.partidaActual.jugadores[i].email,
+                                    sesion.partidaActual.jugadores[i].photoUrl,
+                                    sesion.partidaActual.jugadores[i].score,
+                                    sesion.partidaActual.jugadores[i].pause);
+                              }
+                              i++;
                             }
-                            i++;
-                          }
-                          DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
-                          Firestore.instance.runTransaction((Transaction transaction) async {
-                            await transaction.update(documentReference, <String, dynamic>{
-                              'jugadores' : jugadoresActualizados,
+                            DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
+                            Firestore.instance.runTransaction((Transaction transaction) async {
+                              await transaction.update(documentReference, <String, dynamic>{
+                                'jugadores': [],
+                              });
+                              jugadoresActualizados.forEach((jugador) async {
+                                await transaction.update(documentReference, <String, dynamic>{
+                                  'jugadores': FieldValue.arrayUnion([jugador.toMap()]),
+                                });
+                              });
                             });
-                          });
-
-
-
-                        },
-                      );
-                    }
+                          },
+                        ),
+                  Text(
+                    'Restante: $contador',
+                    style: TextStyle(
+                      fontSize: 15,
                     ),
-                    Text(
-                      'Restante: $contador',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -595,13 +587,18 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 sesion.partidaActual.jugadores[i].pause);
                             i++;
                           }
-                          Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
-                            'jugadores': jugadoresActualizados,
+                          DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
+                          Firestore.instance.runTransaction((Transaction transaction) async {
+                            await transaction.update(documentReference, <String, dynamic>{
+                              'jugadores': jugadoresActualizados,
+                            });
                           });
-                          Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
-                            'nAciertos': FieldValue.increment(1),
+
+                          Firestore.instance.runTransaction((Transaction transaction) async {
+                            await transaction.update(documentReference, <String, dynamic>{
+                              'nAciertos': FieldValue.increment(1),
+                            });
                           });
-                          //
 
                           print('Numero de aciertos: ' + sesion.partidaActual.nAciertos.toString());
                         }
@@ -696,8 +693,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 for (Jugador gamer in sesion.partidaActual.jugadores) {
                                   if (sesion.partidaActual.jugadores[sigTurno].pause) {
                                     sigTurno = (sigTurno + 1) % num_jugadores;
-                                  }
-                                  else {
+                                  } else {
                                     break;
                                   }
                                 }
