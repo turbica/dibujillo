@@ -251,7 +251,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       int puntuacion = 0;
       int i = 0;
       while (i < sesion.partidaActual.jugadores.length) {
-        if (getIndex() == i && contenido == sesion.partidaActual.palabra) {
+        if (getIndex() == i && contenido.toLowerCase() == sesion.partidaActual.palabra.toLowerCase()) {
           puntuacion = sesion.partidaActual.jugadores[i].score;
           if (contador > 50)
             puntuacion += 25;
@@ -270,7 +270,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       }
       await transaction.update(documentReference, <String, dynamic>{
         'chat': FieldValue.arrayUnion(nuevoMensaje),
-        'nAciertos': contenido == sesion.partidaActual.palabra ? FieldValue.increment(1) : FieldValue.increment(0),
+        'nAciertos': contenido.toLowerCase() == sesion.partidaActual.palabra.toLowerCase() ? FieldValue.increment(1) : FieldValue.increment(0),
         'jugadores': [],
       });
       print('Num jugadores actualizando:' + jugadores.length.toString());
