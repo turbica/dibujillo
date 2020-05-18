@@ -247,7 +247,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       int puntuacion = 0;
       int i = 0;
       while (i < sesion.partidaActual.jugadores.length) {
-        if (getIndex() == sesion.partidaActual.jugadores[i]) {
+        if (getIndex() == i) {
           puntuacion = sesion.partidaActual.jugadores[i].score;
           if (contador > 50)
             puntuacion += 25;
