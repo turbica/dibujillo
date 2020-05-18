@@ -203,7 +203,69 @@ class SocialState extends State<Social> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            String email = await showDialog(
+            await showGeneralDialog(
+                barrierColor: Colors.white.withOpacity(0.0),
+                transitionBuilder: (context, a1, a2, widget) {
+                  final curvedValue = Curves.easeInOutBack.transform(a1.value) -   1.0;
+                  return Transform(
+                    transform: Matrix4.translationValues(0.0, -curvedValue * 100, 0.0),
+                    child: Opacity(
+                      opacity: a1.value,
+                      child: AlertDialog(
+                        titleTextStyle: TextStyle(fontSize: 25, color: Colors.black),
+                        backgroundColor: Colors.amber,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.black, width: 4.0),
+                            borderRadius: new BorderRadius.circular(15)),
+                        title: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text('Introduce el email de tu amigo:'),
+                        ),
+                        content: TextField(
+                          controller: textController,
+                          decoration: InputDecoration(
+                            fillColor: Colors.limeAccent,
+                            labelText: 'Email de tu amigo',
+                            labelStyle: TextStyle(
+                              color: Colors.black26,
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey),
+                            ),
+                          ),
+
+                        ),
+                        actions: <Widget>[
+                          //FlatButton(
+                          //onPressed: () {
+                          // Navigator.pop(context, "");
+                          //},
+                          // child: Text('Cancelar' , style: TextStyle(color: Colors.black)),
+                          //),
+                          Center(
+                            child: RaisedButton(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(15)),
+                              onPressed: () {
+                                Navigator.pop(context, textController.value.text);
+                                envi = true;
+                              },
+                              child: Text('Enviar solicitud',
+                                  style: TextStyle(color: Colors.black)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                transitionDuration: Duration(milliseconds: 200),
+                barrierDismissible: true,
+                barrierLabel: '',
+                context: context,
+                pageBuilder: (context, animation1, animation2) {});
+            /*String email = await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
@@ -253,16 +315,18 @@ class SocialState extends State<Social> {
                 );
               },
             );
+          */
+            print("a tu si ramon");
             Usuario usuario = await Firestore.instance
                 .collection('usuarios')
-                .document(email)
+                .document( textController.value.text)
                 .get()
                 .then((usuario) => Usuario.decodeUsuario(usuario.data))
                 .catchError((error) {
               return null;
             });
             if (usuario != null) {
-              if (sesion.usuario.email == email) {
+              if (sesion.usuario.email ==  textController.value.text) {
                 if (envi) {
                   Scaffold.of(context).showSnackBar(SnackBar(
                     duration: Duration(seconds: 2),
@@ -274,7 +338,7 @@ class SocialState extends State<Social> {
               } else {
                 await Firestore.instance
                     .collection('usuarios')
-                    .document(email)
+                    .document( textController.value.text)
                     .updateData({
                   "solicitudes": FieldValue.arrayUnion([sesion.usuario.email]),
                 }).then((value) async {
@@ -288,7 +352,7 @@ class SocialState extends State<Social> {
             } else {
               if (envi) {
                 Scaffold.of(context).showSnackBar(SnackBar(
-                  duration: Duration(seconds: 2),
+                  duration: Duration(seconds: 1),
                   backgroundColor: Colors.amber,
                   content: Text('No existe el usuario :('),
                 ));
@@ -296,6 +360,11 @@ class SocialState extends State<Social> {
               }
             }
           },
+          elevation: 5,
+          highlightElevation: 10,
+
+          splashColor: Colors.orange,
+          focusColor: Colors.orange,
           backgroundColor: Colors.amber,
           shape: RoundedRectangleBorder(
             side: BorderSide(color: Colors.black, width: 4.0),
@@ -341,6 +410,7 @@ class SocialState extends State<Social> {
     );
   }
 }
+
 
 class Choice {
   const Choice({this.title, this.icon});
