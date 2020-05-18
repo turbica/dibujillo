@@ -14,6 +14,7 @@ class Social extends StatefulWidget {
 
 class SocialState extends State<Social> {
   Sesion sesion;
+  bool envi;
 
   int tabSelected = 0;
 
@@ -21,7 +22,11 @@ class SocialState extends State<Social> {
 
   Future<Usuario> obtenerUsuario(String email) async {
     Usuario aux;
-    await Firestore.instance.collection('usuarios').document(email).get().then((usuario) {
+    await Firestore.instance
+        .collection('usuarios')
+        .document(email)
+        .get()
+        .then((usuario) {
       aux = Usuario.decodeUsuario(usuario.data);
     });
     return Future.value(aux);
@@ -29,6 +34,7 @@ class SocialState extends State<Social> {
 
   @override
   void initState() {
+    envi = false;
     textController = TextEditingController();
     super.initState();
   }
@@ -41,7 +47,17 @@ class SocialState extends State<Social> {
       initialIndex: 0,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("SOCIAL"),
+          title: Text(
+            "SOCIAL",
+            style:
+                TextStyle(fontStyle:  FontStyle.normal,color: Colors.black, fontSize: 26, shadows: <Shadow>[
+              Shadow(
+                offset: Offset(1.0, 0.0),
+                blurRadius: 2.0,
+                color: Colors.green,
+              )
+            ]),
+          ),
           backgroundColor: Color(0xff61ffa6),
           leading: Padding(
             padding: EdgeInsets.only(left: 12),
@@ -85,7 +101,8 @@ class SocialState extends State<Social> {
                                 leading: CircleAvatar(
                                   backgroundImage: NetworkImage(amigo.photoUrl),
                                 ),
-                                title: Text('${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
+                                title: Text(
+                                    '${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
                                 trailing: Text('${amigo.monedas} monedas'),
                               );
                             } else {
@@ -104,7 +121,8 @@ class SocialState extends State<Social> {
                       itemCount: sesion.usuario.solicitudes.length,
                       itemBuilder: (context, index) {
                         return FutureBuilder(
-                          future: obtenerUsuario(sesion.usuario.solicitudes[index]),
+                          future:
+                              obtenerUsuario(sesion.usuario.solicitudes[index]),
                           builder: (context, data) {
                             if (data.hasData) {
                               Usuario amigo = data.data;
@@ -112,21 +130,35 @@ class SocialState extends State<Social> {
                                 leading: CircleAvatar(
                                   backgroundImage: NetworkImage(amigo.photoUrl),
                                 ),
-                                title: Text('${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
+                                title: Text(
+                                    '${amigo.apodo}  -  ${amigo.total_puntos} puntos'),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     GestureDetector(
                                       onTap: () async {
-                                        await Firestore.instance.runTransaction((Transaction transaction) async {
-                                          await transaction
-                                              .update(Firestore.instance.collection('usuarios').document(sesion.usuario.email), <String, dynamic>{
-                                            "amigos": FieldValue.arrayUnion([amigo.email]),
-                                            "solicitudes": FieldValue.arrayRemove([amigo.email]),
-                                          });
-                                          await transaction.update(Firestore.instance.collection('usuarios').document(amigo.email), <String, dynamic>{
-                                            "amigos": FieldValue.arrayUnion([sesion.usuario.email]),
-                                          });
+                                        await Firestore.instance.runTransaction(
+                                            (Transaction transaction) async {
+                                          await transaction.update(
+                                              Firestore.instance
+                                                  .collection('usuarios')
+                                                  .document(
+                                                      sesion.usuario.email),
+                                              <String, dynamic>{
+                                                "amigos": FieldValue.arrayUnion(
+                                                    [amigo.email]),
+                                                "solicitudes":
+                                                    FieldValue.arrayRemove(
+                                                        [amigo.email]),
+                                              });
+                                          await transaction.update(
+                                              Firestore.instance
+                                                  .collection('usuarios')
+                                                  .document(amigo.email),
+                                              <String, dynamic>{
+                                                "amigos": FieldValue.arrayUnion(
+                                                    [sesion.usuario.email]),
+                                              });
                                         });
                                         setState(() {});
                                       },
@@ -137,8 +169,12 @@ class SocialState extends State<Social> {
                                     ),
                                     GestureDetector(
                                       onTap: () async {
-                                        await Firestore.instance.collection('usuarios').document(sesion.usuario.email).updateData({
-                                          "solicitudes": FieldValue.arrayRemove([amigo.email]),
+                                        await Firestore.instance
+                                            .collection('usuarios')
+                                            .document(sesion.usuario.email)
+                                            .updateData({
+                                          "solicitudes": FieldValue.arrayRemove(
+                                              [amigo.email]),
                                         });
                                         setState(() {});
                                       },
@@ -167,20 +203,88 @@ class SocialState extends State<Social> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            String email = await showDialog(
+            await showGeneralDialog(
+                barrierColor: Colors.white.withOpacity(0.0),
+                transitionBuilder: (context, a1, a2, widget) {
+                  final curvedValue = Curves.easeInOutBack.transform(a1.value) -   1.0;
+                  return Transform(
+                    transform: Matrix4.translationValues(0.0, -curvedValue * 100, 0.0),
+                    child: Opacity(
+                      opacity: a1.value,
+                      child: AlertDialog(
+                        titleTextStyle: TextStyle(fontSize: 25, color: Colors.black),
+                        backgroundColor: Colors.amber,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.black, width: 4.0),
+                            borderRadius: new BorderRadius.circular(15)),
+                        title: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text('Introduce el email de tu amigo:'),
+                        ),
+                        content: TextField(
+                          controller: textController,
+                          decoration: InputDecoration(
+                            fillColor: Colors.limeAccent,
+                            labelText: 'Email de tu amigo',
+                            labelStyle: TextStyle(
+                              color: Colors.black26,
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey),
+                            ),
+                          ),
+
+                        ),
+                        actions: <Widget>[
+                          //FlatButton(
+                          //onPressed: () {
+                          // Navigator.pop(context, "");
+                          //},
+                          // child: Text('Cancelar' , style: TextStyle(color: Colors.black)),
+                          //),
+                          Center(
+                            child: RaisedButton(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(15)),
+                              onPressed: () {
+                                Navigator.pop(context, textController.value.text);
+                                envi = true;
+                              },
+                              child: Text('Enviar solicitud',
+                                  style: TextStyle(color: Colors.black)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                transitionDuration: Duration(milliseconds: 200),
+                barrierDismissible: true,
+                barrierLabel: '',
+                context: context,
+                pageBuilder: (context, animation1, animation2) {});
+            /*String email = await showDialog(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
+                  titleTextStyle: TextStyle(fontSize: 25, color: Colors.black),
+                  backgroundColor: Colors.amber,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.black, width: 4.0),
+                      borderRadius: new BorderRadius.circular(15)),
                   title: Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Text('Introduce el email de tu amigo'),
+                    child: Text('Introduce el email de tu amigo:'),
                   ),
                   content: TextField(
                     controller: textController,
                     decoration: InputDecoration(
+                      fillColor: Colors.limeAccent,
                       labelText: 'Email de tu amigo',
                       labelStyle: TextStyle(
-                        color: Colors.grey,
+                        color: Colors.black26,
                       ),
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
@@ -188,46 +292,79 @@ class SocialState extends State<Social> {
                     ),
                   ),
                   actions: <Widget>[
-                    FlatButton(
-                      onPressed: () {
-                        Navigator.pop(context, "");
-                      },
-                      child: Text('Cancelar'),
-                    ),
-                    FlatButton(
-                      onPressed: () {
-                        Navigator.pop(context, textController.value.text);
-                      },
-                      child: Text('Enviar solicitud'),
+                    //FlatButton(
+                    //onPressed: () {
+                    // Navigator.pop(context, "");
+                    //},
+                    // child: Text('Cancelar' , style: TextStyle(color: Colors.black)),
+                    //),
+                    Center(
+                      child: RaisedButton(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(15)),
+                        onPressed: () {
+                          Navigator.pop(context, textController.value.text);
+                          envi = true;
+                        },
+                        child: Text('Enviar solicitud',
+                            style: TextStyle(color: Colors.black)),
+                      ),
                     ),
                   ],
                 );
               },
             );
+          */
+            print("a tu si ramon");
             Usuario usuario = await Firestore.instance
                 .collection('usuarios')
-                .document(email)
+                .document( textController.value.text)
                 .get()
                 .then((usuario) => Usuario.decodeUsuario(usuario.data))
                 .catchError((error) {
               return null;
             });
             if (usuario != null) {
-              await Firestore.instance.collection('usuarios').document(email).updateData({
-                "solicitudes": FieldValue.arrayUnion([sesion.usuario.email]),
-              }).then((value) async {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text('Solicitud enviada!'),
-                  duration: Duration(seconds: 2),
-                ));
-              });
+              if (sesion.usuario.email ==  textController.value.text) {
+                if (envi) {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    duration: Duration(seconds: 2),
+                    backgroundColor: Colors.amber,
+                    content: Text('No puedes introducir tu usuario'),
+                  ));
+                  envi = false;
+                }
+              } else {
+                await Firestore.instance
+                    .collection('usuarios')
+                    .document( textController.value.text)
+                    .updateData({
+                  "solicitudes": FieldValue.arrayUnion([sesion.usuario.email]),
+                }).then((value) async {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text('Solicitud enviada!'),
+                    backgroundColor: Colors.amber,
+                    duration: Duration(seconds: 2),
+                  ));
+                });
+              }
             } else {
-              Scaffold.of(context).showSnackBar(SnackBar(
-                duration: Duration(seconds: 2),
-                content: Text('No existe el usuario :('),
-              ));
+              if (envi) {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  duration: Duration(seconds: 1),
+                  backgroundColor: Colors.amber,
+                  content: Text('No existe el usuario :('),
+                ));
+                envi = false;
+              }
             }
           },
+          elevation: 5,
+          highlightElevation: 10,
+
+          splashColor: Colors.orange,
+          focusColor: Colors.orange,
           backgroundColor: Colors.amber,
           shape: RoundedRectangleBorder(
             side: BorderSide(color: Colors.black, width: 4.0),
@@ -253,7 +390,8 @@ class SocialState extends State<Social> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => EditarPerfil(sesion.usuario)),
+                    MaterialPageRoute(
+                        builder: (context) => EditarPerfil(sesion.usuario)),
                   );
                 },
               ),
@@ -272,6 +410,7 @@ class SocialState extends State<Social> {
     );
   }
 }
+
 
 class Choice {
   const Choice({this.title, this.icon});

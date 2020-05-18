@@ -24,7 +24,8 @@ class TiendaState extends State<Tienda> {
     int monedas = sesion.usuario.monedas - 50;
     print(color.toString());
     Firestore.instance.collection('usuarios').document(email).updateData({
-      "colores": FieldValue.arrayUnion([color.toString().substring(6, 16).toUpperCase()]),
+      "colores": FieldValue.arrayUnion(
+          [color.toString().substring(6, 16).toUpperCase()]),
       "monedas": monedas,
     });
   }
@@ -66,7 +67,9 @@ class TiendaState extends State<Tienda> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Seguro que quieres comprar el color ' + nombreColor + ' ?'),
+                Text('Seguro que quieres comprar el color ' +
+                    nombreColor +
+                    ' ?'),
               ],
             ),
           ),
@@ -94,7 +97,12 @@ class TiendaState extends State<Tienda> {
     );
   }
 
-  Card buildColor({String text, Color backgroundcolor, Color textColor, Color borderColor, Function function}) {
+  Card buildColor(
+      {String text,
+      Color backgroundcolor,
+      Color textColor,
+      Color borderColor,
+      Function function}) {
     return Card(
       color: backgroundcolor,
       child: FlatButton(
@@ -117,7 +125,11 @@ class TiendaState extends State<Tienda> {
                 color: textColor,
                 circleSize: 30,
               ),
-              Text(text, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 25)),
+              Text(text,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25)),
               //MainAxisAlignment.spaceBetween,
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -148,11 +160,20 @@ class TiendaState extends State<Tienda> {
 
   Sesion sesion;
   List<String> colors = ["Negro", "Azul", "Verde", "Amarillo"];
-  List<Color> colores = [Color(0xFF000000), Color(0xFF1E88E5), Color(0xFF4CAF50), Color(0xFFFFEB3B)];
+  List<Color> colores = [
+    Color(0xFF000000),
+    Color(0xFF1E88E5),
+    Color(0xFF4CAF50),
+    Color(0xFFFFEB3B)
+  ];
 
   Widget buildBody(BuildContext ctxt, int index) {
     return buildColor(
-        text: colors[index], textColor: colores[index], backgroundcolor: Color(0xff61ffa6), borderColor: Colors.blueGrey, function: comprar);
+        text: colors[index],
+        textColor: colores[index],
+        backgroundcolor: Color(0xff61ffa6),
+        borderColor: Colors.blueGrey,
+        function: comprar);
   }
 
   @override
@@ -160,7 +181,20 @@ class TiendaState extends State<Tienda> {
     sesion = Provider.of<Sesion>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("TIENDA"),
+        title: Text(
+          "TIENDA",
+          style: TextStyle(
+              fontStyle: FontStyle.normal,
+              color: Colors.black,
+              fontSize: 26,
+              shadows: <Shadow>[
+                Shadow(
+                  offset: Offset(1.0, 0.0),
+                  blurRadius: 2.0,
+                  color: Colors.green,
+                )
+              ]),
+        ),
         backgroundColor: Color(0xff61ffa6),
         leading: Padding(
           padding: EdgeInsets.only(left: 12),
@@ -169,6 +203,20 @@ class TiendaState extends State<Tienda> {
             fit: BoxFit.cover,
           ),
         ),
+        actions: <Widget>[
+          Column(
+            children: <Widget>[
+              SizedBox(height: 6),
+              Image.asset(
+                'images/guarda.gif',
+                fit: BoxFit.cover,
+                scale: 6,
+              ),
+              Text("${sesion.usuario.monedas}", style: TextStyle(fontSize: 13),)
+            ],
+          ),
+          SizedBox(width: 6),
+        ],
       ),
       backgroundColor: Color(0xffbdfccf),
       body: new ListView.builder(
