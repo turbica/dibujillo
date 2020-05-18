@@ -142,7 +142,7 @@ class TiendaState extends State<Tienda> {
                   IconButton(
                     onPressed: () {},
                     icon: !sesion.usuario.colores.contains(textColor)
-                        ? new Image.asset("images/moneda.png")
+                        ? Image.asset("images/moneda.png")
                         : Icon(
                             Icons.check,
                             size: 30,

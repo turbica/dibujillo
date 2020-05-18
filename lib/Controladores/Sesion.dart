@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Modelos/Partida.dart';
 import 'package:dibujillo/Modelos/Usuario.dart';
@@ -15,6 +17,8 @@ class Sesion extends ChangeNotifier {
   Partida partidaActual;
   double anchoLienzo = 10000;
   double separadores = 1;
+
+  StreamSubscription<DocumentSnapshot> puntoEscucha;
 
   escucharUsuario(String email) {
     Firestore.instance.collection('usuarios').document(email).snapshots().listen((doc) {
@@ -66,13 +70,17 @@ class Sesion extends ChangeNotifier {
         partidaActual = Partida.decodePartida(partida.data);
         print('Partida cargada');
       });
-      Firestore.instance.collection('partidas').document(id).snapshots().listen((partida) {
+      puntoEscucha = Firestore.instance.collection('partidas').document(id).snapshots().listen((partida) {
         partidaActual = Partida.decodePartida(partida.data);
         print('Partida actualizada con ${partidaActual.chat.length} mensajes');
         notifyListeners();
       });
     }
     return exito;
+  }
+
+  dejarDeEscuchar() {
+    puntoEscucha.cancel();
   }
 
   updateSeperador() {
