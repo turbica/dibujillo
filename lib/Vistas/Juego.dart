@@ -689,17 +689,23 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 List jugadores = document['jugadores'];
                                 int num_jugadores = jugadores.length;
                                 int turno = document['turno'];
-                                int sigTurno = (turno + 1) % num_jugadores;
+                                int ronda = document['ronda'];
+                                int anterior = turno;
+                                int sigTurno = turno;
+
                                 for (Jugador gamer in sesion.partidaActual.jugadores) {
                                   if (sesion.partidaActual.jugadores[sigTurno].pause) {
                                     sigTurno = (sigTurno + 1) % num_jugadores;
+                                    if (sigTurno < anterior) {
+                                      ronda++;
+                                    }
                                   } else {
                                     break;
                                   }
                                 }
                                 int proximo = sigTurno;
 
-                                int ronda = proximo > turno ? document['ronda'] : document['ronda'] + 1;
+                                // int ronda = proximo > turno ? document['ronda'] : document['ronda'] + 1;
 
                                 await transaction.update(documentReference, <String, dynamic>{
                                   'turno': proximo,
