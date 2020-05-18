@@ -159,12 +159,13 @@ class TiendaState extends State<Tienda> {
   }
 
   Sesion sesion;
-  List<String> colors = ["Negro", "Azul", "Verde", "Amarillo"];
+  List<String> colors = ["Negro", "Azul", "Verde", "Amarillo", "Rojo"];
   List<Color> colores = [
     Color(0xFF000000),
     Color(0xFF1E88E5),
     Color(0xFF4CAF50),
-    Color(0xFFFFEB3B)
+    Color(0xFFFFEB3B),
+    Color(0xFFE53935),
   ];
 
   Widget buildBody(BuildContext ctxt, int index) {
