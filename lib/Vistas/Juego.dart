@@ -45,6 +45,9 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     if (timer != null) {
       timer.cancel();
     }
+    if (timerSelect != null) {
+      timerSelect.cancel();
+    }
     super.dispose();
   }
 
@@ -280,18 +283,18 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     if (contenido.isEmpty) tecladoUp = false;
   }
 
-  Timer _timerSelect;
-  int _start = 10;
+  Timer timerSelect;
+  int start = 0;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
-    _timerSelect = new Timer.periodic(
+    timerSelect = Timer.periodic(
       oneSec,
-      (Timer timerSelect) {
-        _start = _start - 1;
-        if (_start < 1) {
+      (timerSelect) {
+        if (start > 0) {
+          start--;
+        } else {
           timerSelect.cancel();
-          _start = 10;
 
           DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
           Firestore.instance.runTransaction((Transaction transaction) async {
@@ -313,8 +316,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                 if (turno < anterior) {
                   ronda++;
                 }
-              }
-              else {
+              } else {
                 numComprobados = numJugadores;
               }
             }
@@ -341,7 +343,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    int myindex;
     sesion = Provider.of<Sesion>(context);
     ancho = MediaQuery.of(context).size.width;
     revisarChat = sesion.partidaActual.chat;
@@ -648,8 +649,10 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 'palabra': palabras[index],
                               });
                               print('Palabra actualizada: ${palabras[index]}');
-                              _timerSelect.cancel();
-                              _timerSelect = null;
+                              if (timerSelect != null) {
+                                timerSelect.cancel();
+                              }
+                              timerSelect = null;
                             },
                             child: Text(palabras[index]),
                           );
@@ -701,8 +704,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                     if (turno < anterior) {
                                       ronda++;
                                     }
-                                  }
-                                  else {
+                                  } else {
                                     numComprobados = numJugadores;
                                   }
                                 }
@@ -774,11 +776,12 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             colorTrazo = Colors.black;
             palabraAcertada = false;
             pista = null;
-            if (_timerSelect == null) startTimer();
+            start = 10;
+            if (timerSelect == null) startTimer();
             return Future.value('esperarPalabra');
           } else {
-            _timerSelect = null;
-            _start = 10;
+            timerSelect = null;
+            start = 10;
             if (timer == null) {
               contador = 60;
               iniciarContador();
@@ -789,7 +792,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           }
         } else {
           if (sesion.partidaActual.palabra == "") {
-            _timerSelect = null;
+            timerSelect = null;
             timer = null;
             contador = 0;
             _mensajes.clear();
@@ -798,8 +801,8 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             pista = null;
             return Future.value('esperarEleccionPalabra');
           } else {
-            _timerSelect = null;
-            _start = 10;
+            timerSelect = null;
+            start = 10;
             if (timer == null) {
               contador = 60;
               iniciarContador();
