@@ -241,8 +241,38 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       "contenido": contenido,
       "timestamp": Timestamp.now(),
     });
-    Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
-      "chat": FieldValue.arrayUnion(nuevoMensaje),
+    DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
+    Firestore.instance.runTransaction((Transaction transaction) async {
+      List<Jugador> jugadores = new List();
+      int puntuacion = 0;
+      int i = 0;
+      while (i < sesion.partidaActual.jugadores.length) {
+        if (getIndex() == sesion.partidaActual.jugadores[i]) {
+          puntuacion = sesion.partidaActual.jugadores[i].score;
+          if (contador > 50)
+            puntuacion += 25;
+          else if (contador > 35)
+            puntuacion += 15;
+          else if (contador > 15)
+            puntuacion += 10;
+          else
+            puntuacion += 5;
+        } else {
+          puntuacion = sesion.partidaActual.jugadores[i].score;
+        }
+        jugadores[i] = new Jugador(sesion.partidaActual.jugadores[i].apodo, sesion.partidaActual.jugadores[i].email,
+            sesion.partidaActual.jugadores[i].photoUrl, puntuacion, sesion.partidaActual.jugadores[i].pause);
+        i++;
+      }
+      await transaction.update(documentReference, <String, dynamic>{
+        'chat': FieldValue.arrayUnion(nuevoMensaje),
+        'jugadores': [],
+      });
+      jugadores.forEach((jugador) async {
+        await transaction.update(documentReference, <String, dynamic>{
+          'jugadores': FieldValue.arrayUnion([jugador.toMap()]),
+        });
+      });
     });
     if (contenido.isEmpty) tecladoUp = false;
   }
@@ -565,59 +595,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                               animationController: new AnimationController(vsync: this, duration: new Duration(milliseconds: 300)),
                             ));
                         _mensajes[0].animationController.forward();
-                        if (mensaje.contenido.trim().toLowerCase() == palabra.trim().toLowerCase()) {
-                          int i = 0;
-                          var jugadoresActualizados = new List(sesion.partidaActual.num_jugadores);
-                          while (sesion.partidaActual.jugadores[i].email != mensaje.usuario.email) {
-                            jugadoresActualizados[i] = new Jugador(
-                                sesion.partidaActual.jugadores[i].apodo,
-                                sesion.partidaActual.jugadores[i].email,
-                                sesion.partidaActual.jugadores[i].photoUrl,
-                                sesion.partidaActual.jugadores[i].score,
-                                sesion.partidaActual.jugadores[i].pause);
-                            i++;
-                          }
-                          int puntuacion = sesion.partidaActual.jugadores[i].score;
-                          if (contador > 50)
-                            puntuacion += 25;
-                          else if (contador > 35)
-                            puntuacion += 15;
-                          else if (contador > 15)
-                            puntuacion += 10;
-                          else
-                            puntuacion += 5;
-                          jugadoresActualizados[i] = new Jugador(
-                            sesion.partidaActual.jugadores[i].apodo,
-                            sesion.partidaActual.jugadores[i].email,
-                            sesion.partidaActual.jugadores[i].photoUrl,
-                            puntuacion,
-                            sesion.partidaActual.jugadores[i].pause,
-                          );
-                          i = 0;
-                          while (i < sesion.partidaActual.num_jugadores) {
-                            jugadoresActualizados[i] = new Jugador(
-                                sesion.partidaActual.jugadores[i].apodo,
-                                sesion.partidaActual.jugadores[i].email,
-                                sesion.partidaActual.jugadores[i].photoUrl,
-                                sesion.partidaActual.jugadores[i].score,
-                                sesion.partidaActual.jugadores[i].pause);
-                            i++;
-                          }
-                          DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
-                          Firestore.instance.runTransaction((Transaction transaction) async {
-                            await transaction.update(documentReference, <String, dynamic>{
-                              'jugadores': [],
-                              'nAciertos': FieldValue.increment(1),
-                            });
-                            jugadoresActualizados.forEach((jugador) async {
-                              await transaction.update(documentReference, <String, dynamic>{
-                                'jugadores': FieldValue.arrayUnion([jugador.toMap()]),
-                              });
-                            });
-                          });
-
-                          print('Numero de aciertos: ' + sesion.partidaActual.nAciertos.toString());
-                        }
                       }
                       print('El chat tiene ${_mensajes.length} mensajes');
                       return Flexible(
