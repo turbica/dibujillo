@@ -244,7 +244,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
 
     DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
     Firestore.instance.runTransaction((Transaction transaction) async {
-      List<Jugador> jugadores = new List();
+      List<Jugador> jugadores = new List(sesion.partidaActual.jugadores.length);
       int puntuacion = 0;
       int i = 0;
       while (i < sesion.partidaActual.jugadores.length) {
@@ -267,9 +267,10 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       }
       await transaction.update(documentReference, <String, dynamic>{
         'chat': FieldValue.arrayUnion(nuevoMensaje),
-        'nAciertos' : contenido == sesion.partidaActual.palabra ? FieldValue.increment(1) : FieldValue.increment(0),
+        'nAciertos': contenido == sesion.partidaActual.palabra ? FieldValue.increment(1) : FieldValue.increment(0),
         'jugadores': [],
       });
+      print('Num jugadores actualizando:' + jugadores.length.toString());
       jugadores.forEach((jugador) async {
         await transaction.update(documentReference, <String, dynamic>{
           'jugadores': FieldValue.arrayUnion([jugador.toMap()]),
@@ -681,32 +682,34 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                               DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
                               Firestore.instance.runTransaction((Transaction transaction) async {
                                 DocumentSnapshot document = await transaction.get(documentReference);
-                                List jugadores = document['jugadores'];
-                                int num_jugadores = jugadores.length;
-                                int turno = document['turno'];
+                                List jugadoresRaw = document.data['jugadores'];
+                                List<Jugador> jugadores = List();
+                                for (var jugador in jugadoresRaw) {
+                                  jugadores.add(Jugador.decodeJugador(jugador));
+                                }
+                                int numJugadores = jugadores.length;
+                                int turno = document['turno'] + 1;
                                 int ronda = document['ronda'];
-                                int anterior = turno;
-                                int sigTurno = turno;
+                                int anterior = turno - 1;
 
-                                for (Jugador gamer in sesion.partidaActual.jugadores) {
-                                  if (sesion.partidaActual.jugadores[sigTurno].pause) {
-                                    sigTurno = (sigTurno + 1) % num_jugadores;
-                                    if (sigTurno < anterior) {
+                                int numComprobados = 0;
+                                while (numComprobados < numJugadores) {
+                                  if (sesion.partidaActual.jugadores[turno].pause) {
+                                    turno = (turno + 1) % numJugadores;
+                                    if (turno < anterior) {
                                       ronda++;
                                     }
-                                  } else {
-                                    break;
+                                  }
+                                  else {
+                                    numComprobados = numJugadores;
                                   }
                                 }
-                                int proximo = sigTurno;
-
-                                // int ronda = proximo > turno ? document['ronda'] : document['ronda'] + 1;
 
                                 await transaction.update(documentReference, <String, dynamic>{
-                                  'turno': proximo,
+                                  'turno': turno,
                                   'ronda': ronda,
                                   'palabra': "",
-                                  'activos': num_jugadores,
+                                  'activos': numJugadores,
                                   'puntos': [],
                                   'chat': [],
                                   'nAciertos': 0,
