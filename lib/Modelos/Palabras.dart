@@ -1,7 +1,7 @@
 import 'dart:math';
 
 class Palabras {
-  static List<String> palabras = ['manzana', 'pera', 'melocoton', 'sandia', 'melon', 'Apple', 'Microsoft', 'Google', 'Unizar', 'dibujillo'];
+  static List<String> palabras = ['manzana', 'pera', 'melocoton', 'sandia', 'melon', 'Apple', 'Microsoft', 'Google', 'Unizar', 'dibujillo', 'pedro sanchez'];
 
   static List<String> getSugerencias() {
     String sugerencia1 = "";
