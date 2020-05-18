@@ -313,7 +313,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             while (numComprobados < numJugadores) {
               if (sesion.partidaActual.jugadores[turno].pause) {
                 turno = (turno + 1) % numJugadores;
-                if (turno < anterior) {
+                if (turno <= anterior) {
                   ronda++;
                 }
               } else {
@@ -701,7 +701,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 while (numComprobados < numJugadores) {
                                   if (sesion.partidaActual.jugadores[turno].pause) {
                                     turno = (turno + 1) % numJugadores;
-                                    if (turno < anterior) {
+                                    if (turno <= anterior) {
                                       ronda++;
                                     }
                                   } else {
@@ -763,10 +763,12 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     } else {
       if (sesion.partidaActual.ronda >= 4) {
         print('Se acabo la partida');
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => FinPartida()),
-        );
+        Future.delayed(Duration(seconds: 1), () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FinPartida()),
+          );
+        });
       } else {
         if (sesion.usuario.email == sesion.partidaActual.jugadores[sesion.partidaActual.turno].email) {
           if (sesion.partidaActual.palabra == "") {
