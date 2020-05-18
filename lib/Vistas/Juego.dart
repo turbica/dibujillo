@@ -302,7 +302,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
               jugadores.add(Jugador.decodeJugador(jugador));
             }
             int numJugadores = jugadores.length;
-            int turno = document['turno'] + 1;
+            int turno = (document['turno'] + 1) % numJugadores;
             int ronda = document['ronda'];
             int anterior = turno - 1;
 
@@ -690,7 +690,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                   jugadores.add(Jugador.decodeJugador(jugador));
                                 }
                                 int numJugadores = jugadores.length;
-                                int turno = document['turno'] + 1;
+                                int turno = (document['turno'] + 1) % numJugadores;
                                 int ronda = document['ronda'];
                                 int anterior = turno - 1;
 
