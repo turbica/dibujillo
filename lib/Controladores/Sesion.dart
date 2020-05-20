@@ -40,7 +40,6 @@ class Sesion extends ChangeNotifier {
         print('La partida existe');
         if (partida.data['hay_hueco'] == true) {
           print('Hay hueco en la partida');
-          List<String> colores = usuario.colores.map((color) => color.toString().substring(6, 16)).toList();
           await transaction.update(documentReference, <String, dynamic>{
             "jugadores": FieldValue.arrayUnion([
               {

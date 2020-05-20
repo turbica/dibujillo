@@ -123,7 +123,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             ),
             FlatButton(
               onPressed: () async {
-                List<String> colores = sesion.usuario.colores.map((color) => color.toString().substring(6, 16)).toList();
                 await Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
                   "jugadores": FieldValue.arrayRemove([
                     {
@@ -216,6 +215,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       }
       i++;
     }
+    return i;
   }
 
   void _submitAndClose(Usuario usuario, String contenido) {
@@ -316,7 +316,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             while (numComprobados < numJugadores) {
               if (sesion.partidaActual.jugadores[turno].pause) {
                 turno = (turno + 1) % numJugadores;
-                if (turno <= anterior) {
+                if (ronda == saveRonda && turno <= anterior) {
                   ronda++;
                 }
               } else {
@@ -680,7 +680,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                             Jugador jugador = sesion.partidaActual.jugadores[index];
                             return ListTile(
                               leading: CircleAvatar(
-                                child: Text(jugador.apodo[0]),
+                                backgroundImage: NetworkImage(jugador.photoUrl),
                               ),
                               title: Text(jugador.apodo),
                               trailing: Text(jugador.score.toString()),
@@ -710,7 +710,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 while (numComprobados < numJugadores) {
                                   if (sesion.partidaActual.jugadores[turno].pause) {
                                     turno = (turno + 1) % numJugadores;
-                                    if (turno <= anterior) {
+                                    if (ronda == saveRonda && turno <= anterior) {
                                       ronda++;
                                     }
                                   } else {
@@ -747,7 +747,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                             Jugador jugador = sesion.partidaActual.jugadores[index];
                             return ListTile(
                               leading: CircleAvatar(
-                                child: Text(jugador.apodo[0]),
+                                backgroundImage: NetworkImage(jugador.photoUrl),
                               ),
                               title: Text(jugador.apodo),
                               trailing: Text(jugador.score.toString()),
@@ -783,7 +783,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
         Future.delayed(Duration(seconds: 1), () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => FinPartida()),
+            MaterialPageRoute(builder: (context) => FinPartida(sesion.partidaActual, sesion.partidaActual.jugadores.singleWhere((jugador) => jugador.email == sesion.usuario.email))),
           );
         });
       } else {

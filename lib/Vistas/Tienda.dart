@@ -1,11 +1,9 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dibujillo/Vistas/Juego.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +14,6 @@ class Tienda extends StatefulWidget {
 }
 
 class TiendaState extends State<Tienda> {
-  bool _colorActual = false;
   bool error = false;
 
   updateUserColors(Color color) {

@@ -16,10 +16,10 @@ class EditarPerfil extends StatefulWidget {
   EditarPerfil(this.usuario);
 
   @override
-  Editar_Perfil_state createState() => Editar_Perfil_state();
+  EditarPerfilState createState() => EditarPerfilState();
 }
 
-class Editar_Perfil_state extends State<EditarPerfil> {
+class EditarPerfilState extends State<EditarPerfil> {
   final db = Firestore.instance;
   Sesion sesion;
   String _apodo;
