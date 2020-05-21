@@ -156,13 +156,30 @@ class TiendaState extends State<Tienda> {
   }
 
   Sesion sesion;
-  List<String> colors = ["Negro", "Azul", "Verde", "Amarillo", "Rojo"];
+  List<String> colors = ["Negro", "Azul", "Verde", "Amarillo", "Rojo", "Naranja",
+    "Rosa", "Morado", "Marrón", "Mar", "Césped", "Algodón", "Lila", "Gris",
+    "Dibujillo", "Cielo", "Mandarina", "Océano", "Bosque", "Salmón"];
   List<Color> colores = [
     Color(0xFF000000),
     Color(0xFF1E88E5),
     Color(0xFF4CAF50),
     Color(0xFFFFEB3B),
     Color(0xFFE53935),
+    Colors.orange,
+    Color(0xFFF50057),
+    Colors.purple,
+    Color(0xFF6D4C41),
+    Colors.cyanAccent,
+    Colors.lightGreenAccent,
+    Color(0xFFF8BBD0),
+    Color(0xFFB39DDB),
+    Colors.grey,
+    Colors.greenAccent,
+    Colors.lightBlueAccent,
+    Colors.orangeAccent,
+    Colors.indigo,
+    Colors.teal,
+    Color(0xFFFA8072),
   ];
 
   Widget buildBody(BuildContext ctxt, int index) {
