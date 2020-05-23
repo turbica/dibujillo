@@ -85,7 +85,7 @@ class _FinPartidaState extends State<FinPartida> {
                 abandonarPartida();
               },
               child: Container(
-                color: Colors.green,
+                color: Color(0xff61ffa6),
                 padding: EdgeInsets.all(15),
                 child: Text('Canjear puntos y volver'),
               ),
