@@ -253,7 +253,7 @@ class SocialState extends State<Social> {
                   "solicitudes": FieldValue.arrayUnion([sesion.usuario.email]),
                 }).then((value) async {
                   Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text('Solicitud enviada!'),
+                    content: Text('Solicitud  !'),
                     backgroundColor: Colors.amber,
                     duration: Duration(seconds: 2),
                   ));

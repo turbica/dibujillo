@@ -5,12 +5,13 @@ import 'Vistas/Social.dart';
 import 'Vistas/Tienda.dart';
 
 class NavigationBar extends StatefulWidget {
-  @override
+    @override
   _NavigationBarState createState() => _NavigationBarState();
 }
 
 class _NavigationBarState extends State<NavigationBar> {
   var selectedPageIndex = 1;
+  get selectedPageIndep => selectedPageIndex;
   PageController pageController;
 
   var pages = [

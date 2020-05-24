@@ -4,6 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+class EmailFiledValidator{
+  static String validate(String value){
+    return value.isEmpty ? 'Debe proporcionar un email' : null;
+  }
+}
+
+class PasswordFiledValidator{
+  static String validate(String value){
+    return value.isEmpty ? 'Debe introducir una constraseña' : null;
+  }
+}
+
 class SigninPage extends StatefulWidget {
   @override
   _SigninPageState createState() => _SigninPageState();
@@ -94,7 +106,7 @@ class _SigninPageState extends State<SigninPage> {
                                   ),
                                 ),
                               ),
-                              validator: (value) => value.isEmpty ? 'Debe proporcionar un email' : null,
+                              validator:  EmailFiledValidator.validate,
                               onSaved: (value) => _email = value,
                               keyboardType: TextInputType.emailAddress,
                             ),
@@ -115,7 +127,7 @@ class _SigninPageState extends State<SigninPage> {
                                 ),
                               ),
                               obscureText: true,
-                              validator: (value) => value.isEmpty ? 'Debe introducir una constraseña' : null,
+                              validator: PasswordFiledValidator.validate,
                               onSaved: (value) => _password = value,
                             ),
                             SizedBox(height: 5.0),
