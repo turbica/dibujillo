@@ -37,6 +37,11 @@ class TiendaState extends State<Tienda> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
+                Image.asset(
+                  'images/monton.gif ',
+                  fit: BoxFit.cover,
+                 // scale: 6,
+                ),
                 Text('No tienes monedas suficientes.'),
               ],
             ),
