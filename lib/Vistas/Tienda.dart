@@ -1,11 +1,9 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:dibujillo/Vistas/Juego.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +14,6 @@ class Tienda extends StatefulWidget {
 }
 
 class TiendaState extends State<Tienda> {
-  bool _colorActual = false;
   bool error = false;
 
   updateUserColors(Color color) {
@@ -142,7 +139,7 @@ class TiendaState extends State<Tienda> {
                   IconButton(
                     onPressed: () {},
                     icon: !sesion.usuario.colores.contains(textColor)
-                        ? new Image.asset("images/moneda.png")
+                        ? Image.asset("images/moneda.png")
                         : Icon(
                             Icons.check,
                             size: 30,
@@ -159,13 +156,30 @@ class TiendaState extends State<Tienda> {
   }
 
   Sesion sesion;
-  List<String> colors = ["Negro", "Azul", "Verde", "Amarillo", "Rojo"];
+  List<String> colors = ["Negro", "Azul", "Verde", "Amarillo", "Rojo", "Naranja",
+    "Rosa", "Morado", "Marrón", "Mar", "Césped", "Algodón", "Lila", "Gris",
+    "Dibujillo", "Cielo", "Mandarina", "Océano", "Bosque", "Salmón"];
   List<Color> colores = [
     Color(0xFF000000),
     Color(0xFF1E88E5),
     Color(0xFF4CAF50),
     Color(0xFFFFEB3B),
     Color(0xFFE53935),
+    Color(0xFFEF6C00),
+    Color(0xFFF50057),
+    Color(0xFF8E24AA),
+    Color(0xFF6D4C41),
+    Color(0xFF00E5FF),
+    Color(0xFF76FF03),
+    Color(0xFFF8BBD0),
+    Color(0xFFB39DDB),
+    Color(0xFF757575),
+    Color(0xFF00E676),
+    Color(0xFF00B0FF),
+    Color(0xFFFFAB40),
+    Color(0xFF3F51B5),
+    Color(0xFF009688),
+    Color(0xFFFA8072),
   ];
 
   Widget buildBody(BuildContext ctxt, int index) {

@@ -123,7 +123,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             ),
             FlatButton(
               onPressed: () async {
-                List<String> colores = sesion.usuario.colores.map((color) => color.toString().substring(6, 16)).toList();
                 await Firestore.instance.collection('partidas').document(sesion.partidaActual.id).updateData({
                   "jugadores": FieldValue.arrayRemove([
                     {
@@ -216,6 +215,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       }
       i++;
     }
+    return i;
   }
 
   void _submitAndClose(Usuario usuario, String contenido) {
@@ -251,7 +251,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       int puntuacion = 0;
       int i = 0;
       while (i < sesion.partidaActual.jugadores.length) {
-        if (getIndex() == i && contenido.toLowerCase() == sesion.partidaActual.palabra.toLowerCase()) {
+        if (getIndex() == i && contenido.toLowerCase().trim() == sesion.partidaActual.palabra.toLowerCase().trim()) {
           puntuacion = sesion.partidaActual.jugadores[i].score;
           if (contador > 50)
             puntuacion += 25;
@@ -270,7 +270,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
       }
       await transaction.update(documentReference, <String, dynamic>{
         'chat': FieldValue.arrayUnion(nuevoMensaje),
-        'nAciertos': contenido.toLowerCase() == sesion.partidaActual.palabra.toLowerCase() ? FieldValue.increment(1) : FieldValue.increment(0),
+        'nAciertos': contenido.toLowerCase().trim() == sesion.partidaActual.palabra.toLowerCase().trim() ? FieldValue.increment(1) : FieldValue.increment(0),
         'jugadores': [],
       });
       print('Num jugadores actualizando:' + jugadores.length.toString());
@@ -295,6 +295,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           start--;
         } else {
           timerSelect.cancel();
+          timerSelect = null;
 
           DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
           Firestore.instance.runTransaction((Transaction transaction) async {
@@ -305,20 +306,26 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
               jugadores.add(Jugador.decodeJugador(jugador));
             }
             int numJugadores = jugadores.length;
-            int turno = (document['turno'] + 1) % numJugadores;
-            int ronda = document['ronda'];
-            int anterior = turno - 1;
+            int anterior = document.data['turno'];
+            int turno = (document.data['turno'] + 1) % numJugadores;
+            int ronda = document.data['ronda'];
+            int saveRonda = ronda;
 
+            //
             int numComprobados = 0;
             while (numComprobados < numJugadores) {
               if (sesion.partidaActual.jugadores[turno].pause) {
                 turno = (turno + 1) % numJugadores;
-                if (turno <= anterior) {
+                if (ronda == saveRonda && turno <= anterior) {
                   ronda++;
                 }
               } else {
                 numComprobados = numJugadores;
               }
+            }
+
+            if (ronda == saveRonda && turno <= anterior) {
+              ronda++;
             }
 
             await transaction.update(documentReference, <String, dynamic>{
@@ -396,7 +403,6 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                           icon: sesion.partidaActual.jugadores[getIndex()].pause == false ? Icon(Icons.pause) : Icon(Icons.play_arrow),
                           onPressed: () {
                             // Actualizar base de datos
-
                             int i = 0;
                             bool pau = sesion.partidaActual.jugadores[getIndex()].pause;
                             var jugadoresActualizados = new List(sesion.partidaActual.num_jugadores);
@@ -674,7 +680,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                             Jugador jugador = sesion.partidaActual.jugadores[index];
                             return ListTile(
                               leading: CircleAvatar(
-                                child: Text(jugador.apodo[0]),
+                                backgroundImage: NetworkImage(jugador.photoUrl),
                               ),
                               title: Text(jugador.apodo),
                               trailing: Text(jugador.score.toString()),
@@ -692,21 +698,28 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                 for (var jugador in jugadoresRaw) {
                                   jugadores.add(Jugador.decodeJugador(jugador));
                                 }
+                                //  ronda 2, turno 1
                                 int numJugadores = jugadores.length;
-                                int turno = (document['turno'] + 1) % numJugadores;
-                                int ronda = document['ronda'];
-                                int anterior = turno - 1;
+                                int anterior = document.data['turno'];
+                                int turno = (document.data['turno'] + 1) % numJugadores;
+                                int ronda = document.data['ronda'];
+                                int saveRonda = ronda;
 
+                                // ronda 2, turno 2
                                 int numComprobados = 0;
                                 while (numComprobados < numJugadores) {
                                   if (sesion.partidaActual.jugadores[turno].pause) {
                                     turno = (turno + 1) % numJugadores;
-                                    if (turno <= anterior) {
+                                    if (ronda == saveRonda && turno <= anterior) {
                                       ronda++;
                                     }
                                   } else {
                                     numComprobados = numJugadores;
                                   }
+                                }
+
+                                if (ronda == saveRonda && turno <= anterior) {
+                                  ronda++;
                                 }
 
                                 await transaction.update(documentReference, <String, dynamic>{
@@ -734,7 +747,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                             Jugador jugador = sesion.partidaActual.jugadores[index];
                             return ListTile(
                               leading: CircleAvatar(
-                                child: Text(jugador.apodo[0]),
+                                backgroundImage: NetworkImage(jugador.photoUrl),
                               ),
                               title: Text(jugador.apodo),
                               trailing: Text(jugador.score.toString()),
@@ -763,10 +776,14 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
     } else {
       if (sesion.partidaActual.ronda >= 4) {
         print('Se acabo la partida');
+        timer = null;
+        contador = 0;
+        timerSelect = null;
+        sesion.dejarDeEscuchar();
         Future.delayed(Duration(seconds: 1), () {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => FinPartida()),
+            MaterialPageRoute(builder: (context) => FinPartida(sesion.partidaActual, sesion.partidaActual.jugadores.singleWhere((jugador) => jugador.email == sesion.usuario.email))),
           );
         });
       } else {
@@ -774,16 +791,22 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           if (sesion.partidaActual.palabra == "") {
             timer = null;
             contador = 0;
+            start = 0;
             _mensajes.clear();
             colorTrazo = Colors.black;
             palabraAcertada = false;
             pista = null;
-            start = 10;
-            if (timerSelect == null) startTimer();
+            if (timerSelect == null) {
+              start = 10;
+              startTimer();
+            }
             return Future.value('esperarPalabra');
           } else {
+            if (timerSelect != null) {
+              timerSelect.cancel();
+            }
             timerSelect = null;
-            start = 10;
+            start = 0;
             if (timer == null) {
               contador = 60;
               iniciarContador();
@@ -794,17 +817,24 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           }
         } else {
           if (sesion.partidaActual.palabra == "") {
+            if (timerSelect != null) {
+              timerSelect.cancel();
+            }
             timerSelect = null;
             timer = null;
             contador = 0;
+            start = 0;
             _mensajes.clear();
             colorTrazo = Colors.black;
             palabraAcertada = false;
             pista = null;
             return Future.value('esperarEleccionPalabra');
           } else {
+            if (timerSelect != null) {
+              timerSelect.cancel();
+            }
             timerSelect = null;
-            start = 10;
+            start = 00;
             if (timer == null) {
               contador = 60;
               iniciarContador();

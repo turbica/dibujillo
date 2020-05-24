@@ -1,7 +1,12 @@
 import 'dart:math';
 
 class Palabras {
-  static List<String> palabras = ['manzana', 'pera', 'melocoton', 'sandia', 'melon', 'Apple', 'Microsoft', 'Google', 'Unizar', 'dibujillo', 'pedro sanchez'];
+  static List<String> palabras = ['manzana', 'plátano', 'pera', 'camiseta',
+    'chaqueta', 'melocotón', 'aristogato', 'agua', 'leche', 'arbol', 'examen',
+    'mesa', 'estudiar', 'cuaderno', 'zaragoza', 'logroño', 'huesca', 'teruel',
+    'pelo', 'cabeza', 'fútbol', 'baloncesto', 'natación', 'bolsa', 'mochila',
+    'ordenador', 'móvil', 'calendario', 'estuche', 'falda', 'teclado', 'sandia',
+    'melon', 'Microsoft', 'Google', 'Unizar', 'universidad', 'sobresaliente'];
 
   static List<String> getSugerencias() {
     String sugerencia1 = "";
