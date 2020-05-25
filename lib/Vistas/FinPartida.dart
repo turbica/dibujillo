@@ -33,6 +33,7 @@ class _FinPartidaState extends State<FinPartida> {
     });
   }
 
+
   abandonarPartida() async {
     await Firestore.instance.collection('partidas').document(widget.partida.id).updateData({
       "jugadores": FieldValue.arrayRemove([
