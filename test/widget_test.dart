@@ -10,5 +10,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:dibujillo/main.dart';
 
+import 'user_firebase.dart';
+
 void main() {
+  firevase();
 }
