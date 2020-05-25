@@ -16,7 +16,7 @@ void main() {
   });
 
   test('Campo vacío de la contraseña devuelve error' ,() {
-    var result =   .validate('');
+    var result =   PasswordFiledValidator.validate('');
     expect(result, 'Debe introducir una constraseña');
   });
 
