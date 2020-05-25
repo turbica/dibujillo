@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:rxdart/rxdart.dart';
 
-void firevase() {
+void firevase3() {
   testWidgets('Counter increments smoke test',(WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(NavigationBar());

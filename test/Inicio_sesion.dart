@@ -3,7 +3,7 @@ import 'package:dibujillo/Vistas/SigninPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-void main() {
+void firevase() {
 
   test('Campo vacío del email devuelve error' ,() {
     var result = EmailFiledValidator.validate('');
