@@ -20,6 +20,18 @@ class _FinPartidaState extends State<FinPartida> {
       //habra que añadirle monedas
     });
   }
+  canjearMonedas() {
+    int ganadas;
+    for (int i = 0; i < widget.partida.jugadores.length; i++){
+      if(widget.partida.jugadores[i] == widget.jugador){
+        ganadas = widget.partida.jugadores.length - widget.partida.jugadores[i].puesto;
+        break;
+      }
+    }
+    Firestore.instance.collection('usuarios').document(widget.jugador.email).updateData({
+      'monedas': FieldValue.increment(ganadas*10) ,
+    });
+  }
 
   abandonarPartida() async {
     await Firestore.instance.collection('partidas').document(widget.partida.id).updateData({
@@ -30,6 +42,7 @@ class _FinPartidaState extends State<FinPartida> {
           "photoUrl": widget.jugador.photoUrl,
           "score": widget.jugador.score,
           "pause": widget.jugador.pause,
+          "puesto": widget.jugador.puesto,
         }
       ]),
       "activos": FieldValue.increment(-1),
@@ -82,6 +95,7 @@ class _FinPartidaState extends State<FinPartida> {
             FlatButton(
               onPressed: () {
                 canjearPuntos();
+                canjearMonedas();
                 abandonarPartida();
               },
               child: Container(
