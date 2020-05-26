@@ -14,6 +14,7 @@ class FinPartida extends StatefulWidget {
 }
 
 class _FinPartidaState extends State<FinPartida> {
+
   canjearPuntos() {
     Firestore.instance.collection('usuarios').document(widget.jugador.email).updateData({
       'total_puntos': FieldValue.increment(widget.jugador.score),
@@ -21,15 +22,21 @@ class _FinPartidaState extends State<FinPartida> {
     });
   }
   canjearMonedas() {
+
+    List<Jugador> jugadores = widget.partida.jugadores;
+    jugadores.sort((a, b) => b.score.compareTo(a.score));
+    jugadores.forEach((jugador) => print(jugador.apodo + ' ' + jugador.score.toString()));
+
     int ganadas;
-    for (int i = 0; i < widget.partida.jugadores.length; i++){
-      if(widget.partida.jugadores[i] == widget.jugador){
-        ganadas = widget.partida.jugadores.length - widget.partida.jugadores[i].puesto;
+    for (int i = 0; i < jugadores.length; i++){
+      if(jugadores[i].email == widget.jugador.email){
+        ganadas = widget.partida.jugadores.length - i;
+        print('Monedas ganadas por ' + jugadores[i].apodo + ': ' + ganadas.toString());
         break;
       }
     }
     Firestore.instance.collection('usuarios').document(widget.jugador.email).updateData({
-      'monedas': FieldValue.increment(ganadas*10) ,
+      'monedas': FieldValue.increment(ganadas) ,
     });
   }
 
@@ -42,7 +49,6 @@ class _FinPartidaState extends State<FinPartida> {
           "photoUrl": widget.jugador.photoUrl,
           "score": widget.jugador.score,
           "pause": widget.jugador.pause,
-          "puesto": widget.jugador.puesto,
         }
       ]),
       "activos": FieldValue.increment(-1),

@@ -265,7 +265,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
           puntuacion = sesion.partidaActual.jugadores[i].score;
         }
         jugadores[i] = new Jugador(sesion.partidaActual.jugadores[i].apodo, sesion.partidaActual.jugadores[i].email,
-            sesion.partidaActual.jugadores[i].photoUrl, puntuacion, sesion.partidaActual.jugadores[i].pause, 0);
+            sesion.partidaActual.jugadores[i].photoUrl, puntuacion, sesion.partidaActual.jugadores[i].pause);
         i++;
       }
       await transaction.update(documentReference, <String, dynamic>{
@@ -413,14 +413,14 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                                     sesion.partidaActual.jugadores[i].email,
                                     sesion.partidaActual.jugadores[i].photoUrl,
                                     sesion.partidaActual.jugadores[i].score,
-                                    !pau, 0);
+                                    !pau);
                               } else {
                                 jugadoresActualizados[i] = new Jugador(
                                     sesion.partidaActual.jugadores[i].apodo,
                                     sesion.partidaActual.jugadores[i].email,
                                     sesion.partidaActual.jugadores[i].photoUrl,
                                     sesion.partidaActual.jugadores[i].score,
-                                    sesion.partidaActual.jugadores[i].pause, 0);
+                                    sesion.partidaActual.jugadores[i].pause);
                               }
                               i++;
                             }
@@ -796,22 +796,10 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                   sesion.partidaActual.jugadores[i].photoUrl,
                   sesion.partidaActual.jugadores[i].score,
                   sesion.partidaActual.jugadores[i].pause,
-                  i);
+              );
             }
           }
         }
-
-        DocumentReference documentReference = Firestore.instance.collection('partidas').document(sesion.partidaActual.id);
-        Firestore.instance.runTransaction((Transaction transaction) async {
-          await transaction.update(documentReference, <String, dynamic>{
-            'jugadores': [],
-          });
-          jugadores.forEach((jugador) async {
-            await transaction.update(documentReference, <String, dynamic>{
-              'jugadores': FieldValue.arrayUnion([jugador.toMap()]),
-            });
-          });
-        });
 
         Future.delayed(Duration(seconds: 1), () {
           Navigator.pushReplacement(
