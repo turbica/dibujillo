@@ -134,17 +134,6 @@ class _SigninPageState extends State<SigninPage> {
                             Container(
                               alignment: Alignment(1.0, 0.0),
                               padding: EdgeInsets.only(top: 15.0, left: 20.0),
-                              child: InkWell(
-                                child: Text(
-                                  'Olvidaste la contraseña?',
-                                  style: TextStyle(
-                                    color: Color(0xff61ffa6),
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Montserrat',
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
                             ),
                             SizedBox(height: 30.0),
                             Center(

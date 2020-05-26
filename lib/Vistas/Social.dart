@@ -357,6 +357,7 @@ class ChoiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 10,
       color: Colors.amber,
       child: Center(
         child: Column(
