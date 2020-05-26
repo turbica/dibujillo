@@ -11,6 +11,7 @@ addons:
 before_script:
   - git clone https://github.com/flutter/flutter.git -b beta
   - ./flutter/bin/flutter doctor
+  - ./flutter/bin/flutter pub get
 script:
   - ./flutter/bin/flutter test
 cache:
