@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dibujillo/Controladores/Sesion.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -29,6 +30,16 @@ void FirebaseUserTest() {
   final String _nickname = '';
 
   test('Test: Registro de usuario', () async {
+    MethodChannel channel = MethodChannel(
+      'plugins.flutter.io/firebase_auth',
+    );
+    channel.setMockMethodCallHandler((MethodCall call) async {
+      if (call.method == 'currentUser') {
+        return ;
+      }
+      throw MissingPluginException();
+    });
+
     await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password).then((value) async {
       sesion.user = value.user;
       await Firestore.instance.collection('usuarios').document(_email).setData({
@@ -51,6 +62,15 @@ void FirebaseUserTest() {
   });
 
   test('Test: Eliminar usuario', () async {
+    MethodChannel channel = MethodChannel(
+      'plugins.flutter.io/firebase_auth',
+    );
+    channel.setMockMethodCallHandler((MethodCall call) async {
+      if (call.method == 'currentUser') {
+        return ;
+      }
+      throw MissingPluginException();
+    });
 
     await Firestore.instance.collection('usuarios').document(sesion.user.email).delete().then((value) {
       print('Usuario borrado de Firestore');
