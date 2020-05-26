@@ -4,7 +4,6 @@ import 'package:dibujillo/Modelos/Palabras.dart';
 import 'package:dibujillo/Modelos/Partida.dart';
 import 'package:dibujillo/Modelos/Trazo.dart';
 import 'package:dibujillo/Modelos/Usuario.dart';
-import 'package:dibujillo/NavigationBar.dart';
 import 'package:dibujillo/Vistas/SigninPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

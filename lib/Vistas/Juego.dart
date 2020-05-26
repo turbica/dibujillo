@@ -434,6 +434,9 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             children: <Widget>[
               Text(palabra != "" ? '  $palabra' : 'Dibujillo'),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   sesion.partidaActual.turno == getIndex()
                       ? Container()
@@ -491,7 +494,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
                   Text(
                     'Restante: $contador',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 10,
                     ),
                   ),
                 ],
@@ -973,7 +976,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             timerSelect = null;
             start = 0;
             if (timer == null) {
-              contador = 60;
+              contador = 30;
               iniciarContador();
               turnoAnterior = sesion.partidaActual.turno;
               jugadoresAnterior = sesion.partidaActual.jugadores;
@@ -1001,7 +1004,7 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             timerSelect = null;
             start = 00;
             if (timer == null) {
-              contador = 60;
+              contador = 30;
               iniciarContador();
               turnoAnterior = sesion.partidaActual.turno;
               jugadoresAnterior = sesion.partidaActual.jugadores;
