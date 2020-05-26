@@ -66,6 +66,7 @@ void FirebaseUserTest() {
       'plugins.flutter.io/firebase_auth',
     );
     channel.setMockMethodCallHandler((MethodCall call) async {
+      print(call);
       if (call.method == 'currentUser') {
         return ;
       }
