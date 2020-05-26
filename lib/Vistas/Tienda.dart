@@ -33,16 +33,17 @@ class TiendaState extends State<Tienda> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 1.0), borderRadius: new BorderRadius.circular(15)),
           title: Text('ERROR'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Image.asset(
-                  'images/monton.gif ',
+                  'images/monton.gif',
                   fit: BoxFit.cover,
                  // scale: 6,
                 ),
-                Text('No tienes monedas suficientes.'),
+                Text('No tienes monedas suficientes!!'),
               ],
             ),
           ),
@@ -65,6 +66,7 @@ class TiendaState extends State<Tienda> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 1.0), borderRadius: new BorderRadius.circular(15)),
           title: Text('COMPRAR COLOR'),
           content: SingleChildScrollView(
             child: ListBody(

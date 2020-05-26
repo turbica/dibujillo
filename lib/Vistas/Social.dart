@@ -143,7 +143,7 @@ class SocialState extends State<Social> {
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Icon(Icons.check),
+                                        child: Icon(Icons.check, color: Colors.lightBlue,),
                                       ),
                                     ),
                                     GestureDetector(
@@ -155,7 +155,7 @@ class SocialState extends State<Social> {
                                       },
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Icon(Icons.cancel),
+                                        child: Icon(Icons.cancel, color: Colors.red,),
                                       ),
                                     ),
                                   ],
