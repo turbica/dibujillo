@@ -5,14 +5,16 @@ class Jugador {
   int score;
   bool pause;
 
-  Jugador(this.apodo, this.email, this.photoUrl, this.score, this.pause);
+  Jugador(this.apodo,this.email,this.photoUrl,this.score,this.pause);
 
   static Jugador decodeJugador(Map<String, dynamic> jugador) {
-    return Jugador(jugador['apodo'], jugador['email'], jugador['photoUrl'], jugador['score'], jugador['pause']);
+    return Jugador(
+        jugador['apodo'],jugador['email'],jugador['photoUrl'],jugador['score'],
+        jugador['pause']);
   }
 
   toMap() {
-    return <String, dynamic> {
+    return <String, dynamic>{
       'apodo': apodo,
       'email': email,
       'photoUrl': photoUrl,
@@ -20,4 +22,6 @@ class Jugador {
       'pause': pause,
     };
   }
+
+
 }

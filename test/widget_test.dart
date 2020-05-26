@@ -10,8 +10,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:dibujillo/main.dart';
 
-import 'user_firebase.dart';
+import 'pruebas_locales.dart';
+
 
 void main() {
-  firevase();
+  pruebas_vistas();
+  pruebas_modelos();
 }
