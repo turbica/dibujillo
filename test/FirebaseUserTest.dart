@@ -25,9 +25,9 @@ void FirebaseUserTest() {
 
   Sesion sesion = Sesion();
 
-  final String _email = '';
-  final String _password = '';
-  final String _nickname = '';
+  final String _email = 'pruebamovil@gmail.com';
+  final String _password = '123456';
+  final String _nickname = 'pruebamovil';
 
   test('Test: Registro de usuario', () async {
     MethodChannel channel = MethodChannel(
