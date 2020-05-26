@@ -42,7 +42,10 @@ void FirebaseUserTest() {
     });
 
     await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password).then((value) async {
+      print('Value de registro: ');
+      print(value);
       sesion.user = value.user;
+      print('Despues de value');
       await Firestore.instance.collection('usuarios').document(_email).setData({
         "email": _email,
         "apodo": _nickname,
@@ -54,6 +57,8 @@ void FirebaseUserTest() {
         "iconos": [],
         "amigos": [],
         "solicitudes": [],
+      }).catchError((error) {
+        print('Error al registrar en firestore: $error');
       });
       sesion.escucharUsuario(_email);
       print('Registrado');
