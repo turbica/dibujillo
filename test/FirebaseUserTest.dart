@@ -36,11 +36,12 @@ void FirebaseUserTest() {
     channel.setMockMethodCallHandler((MethodCall call) async {
       print('Metodo: ' + call.method);
       if (call.method == 'createUserWithEmailAndPassword') {
+        print('Metodo correcto');
         return;
       }
       throw MissingPluginException();
     });
-
+    print('Voy a registrar');
     await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password).then((value) async {
       print('Value de registro: ');
       print(value);
