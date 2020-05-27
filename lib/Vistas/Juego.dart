@@ -277,13 +277,13 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             contenido.toLowerCase().trim() ==
                 sesion.partidaActual.palabra.toLowerCase().trim()) {
           puntuacion = sesion.partidaActual.jugadores[i].score;
-          if (contador > 50)
+          if (contador > 25)
             puntuacion += 25;
-          else if (contador > 35)
+          else if (contador > 20)
             puntuacion += 15;
           else if (contador > 15)
             puntuacion += 10;
-          else
+          else if (contador > 10)
             puntuacion += 5;
         } else {
           puntuacion = sesion.partidaActual.jugadores[i].score;
