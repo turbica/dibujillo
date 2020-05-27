@@ -30,7 +30,7 @@ class _FinPartidaState extends State<FinPartida> {
     int ganadas;
     for (int i = 0; i < jugadores.length; i++){
       if(jugadores[i].email == widget.jugador.email){
-        ganadas = widget.partida.jugadores.length - i;
+        ganadas = 10*(widget.partida.jugadores.length - (i+1));
         print('Monedas ganadas por ' + jugadores[i].apodo + ': ' + ganadas.toString());
         break;
       }
