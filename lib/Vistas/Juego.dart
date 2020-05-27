@@ -285,6 +285,8 @@ class _JuegoState extends State<Juego> with TickerProviderStateMixin {
             puntuacion += 10;
           else if (contador > 10)
             puntuacion += 5;
+          else
+            puntuacion += 2;
         } else {
           puntuacion = sesion.partidaActual.jugadores[i].score;
         }
